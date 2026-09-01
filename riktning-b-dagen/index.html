@@ -24,7 +24,29 @@
     }
     .b-card > * + * { margin-top: 18px; }
 
-    .b-hero { display: flex; flex-direction: column; gap: 4px; }
+    /* CONTAINER 1: när, hur länge, var. Adressen skiljs från tiden med en
+       hårfin linje i stället för ett eget kort — det är samma svar på frågan
+       »vart och när kommer ni«, inte två skilda ämnen. */
+    .b-hero { display: flex; flex-direction: column; gap: 22px; }
+    .b-hero__adr { padding-top: 20px; border-top: 1px solid var(--line); }
+
+    /* Elektrikern inleder container 2. Ingen ram och ingen platta: hen ska
+       läsa som en hälsning från en människa, inte som ännu ett faktakort. */
+    .b-lead { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px;
+      align-items: center; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    .b-lead .bk-who__photo { width: 64px; height: 64px; }
+    .b-lead .bk-who__photo svg { width: 32px; height: 32px; }
+    .b-lead__txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .b-lead__name { font-size: 20px; font-weight: 600; color: var(--ink);
+      line-height: 1.2; letter-spacing: -.01em; }
+    .b-lead__role { font-size: 14.5px; font-weight: 400; color: var(--ink-soft);
+      line-height: 1.45; text-wrap: pretty; }
+    @media (max-width: 420px) {
+      .b-lead { grid-template-columns: 56px minmax(0, 1fr); gap: 14px; }
+      .b-lead .bk-who__photo { width: 56px; height: 56px; }
+      .b-lead .bk-who__photo svg { width: 28px; height: 28px; }
+      .b-lead__name { font-size: 18.5px; }
+    }
 
     /* tidslinjen: en lodrät linje som binder ihop de tre skedena */
     .b-line { list-style: none; display: flex; flex-direction: column; gap: 0; }
@@ -67,75 +89,64 @@
     </div>
   </header>
 
-  <p class="bk-band">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
-    Tiden är bokad och din offert är accepterad
-  </p>
-
   <main class="bk-flow" id="innehall">
 
     <!-- NÄR. Även i den berättande riktningen ligger datumet överst: kunden
          öppnar sidan flera gånger och ska aldrig behöva scrolla efter det. -->
+    <!-- CONTAINER 1 bär nu tre fakta och inget annat: när, hur länge, var.
+         Elektrikern har flyttat till container 2 där hen inleder besöket.
+         <h1> med <time>: datumet är sidans rubrik, inte en span. -->
     <section class="b-card b-hero" aria-labelledby="nar-h">
       <div class="bk-when">
         <span class="w-cap" id="nar-h">Vi kommer</span>
-        <span class="w-day" data-oa="bokning.dag_lang">Torsdag 24 september</span>
-        <span class="w-time" data-oa="bokning.tidsfonster">08:00 till 12:00</span>
-        <!-- Namnet står redan här, inte bara nere i tidslinjen. Uppmätt låg
-             elektrikerkortet på y=877 på en 390px-skärm, alltså under viken,
-             och »vem kommer« är en av de två frågor sidan måste besvara utan
-             scroll. Hela kortet med bild och nummer ligger kvar i »På plats«,
-             där det hör hemma i berättelsen. -->
-        <span class="w-note"><b style="font-weight:600;color:var(--ink)" data-oa="elektriker.namn">[Elektriker]</b> kommer till dig och ringer när hen är på väg.</span>
-        <button class="bk-cal" type="button" data-kalender
-                data-start="20260924T060000Z" data-slut="20260924T100000Z"
-                data-titel="Elektriker från Ampy" data-uid="B-2026-0431"
-                data-text="Byte av elcentral. Ampy Nordic AB, 010-265 79 79."
-                data-plats="Hemma hos dig">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3M17 3v3"/><path d="M3.8 8.6h16.4"/><path d="M4.6 5.6h14.8v14.8H4.6z"/></svg>
-          Lägg till i kalendern
-        </button>
+        <h1 class="bk-when__day">
+          <span class="w-rel" data-rel hidden></span>
+          <time data-oa="bokning.dag_lang" data-datum="2026-09-24" datetime="2026-09-24">Torsdag 24 september</time>
+        </h1>
+        <!-- Entydigt vad fönstret betyder. »08:00 till 12:00« ensamt kan läsas
+             både som ankomstfönster och som arbetstid, och det är skillnaden
+             mellan att kunna gå till jobbet och att inte kunna det. -->
+        <span class="w-time">Elektrikern kommer mellan <span data-oa="bokning.tidsfonster">08:00 och 12:00</span></span>
+        <span class="w-note">Hen ringer när hen är på väg. Räkna med att arbetet tar
+          <b data-oa="bokning.arbetstid" style="font-weight:600;color:var(--ink)">[GAP: hur länge]</b> från att hen är på plats.</span>
+      </div>
+
+      <!-- VAR. Kunden måste kunna kontrollera att vi kommer till rätt ställe,
+           och adressen är det vanligaste felet att upptäcka i en bekräftelse. -->
+      <div class="b-hero__adr">
+        <span class="bk-where">
+          <span class="bk-where__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-5.4 6.5-10.3A6.5 6.5 0 0 0 5.5 10.7C5.5 15.6 12 21 12 21Z"/><circle cx="12" cy="10.4" r="2.3"/></svg></span>
+          <span class="bk-where__adr" data-oa="bokning.adress_rad1">[Gatuadress]
+            <span data-oa="bokning.adress_rad2">[Postnummer och ort]</span>
+          </span>
+        </span>
       </div>
     </section>
 
     <!-- TIDSLINJEN: innan, på plats, efteråt -->
     <section class="b-card" aria-labelledby="dagen-h">
+      <!-- Elektrikern inleder besöket: hen är det första kunden vill veta om
+           container 2, före vad som ska göras. Telefonnumret är borttaget på
+           ägarorder; det står kvar i sidfoten. -->
+      <div class="b-lead">
+        <span class="bk-who__photo">
+          <!-- [ELEKTRIKERBILD] profilbilden från CRM:et; silhuetten är platshållaren -->
+          <svg data-oa-photo="elektriker.profilbild_url" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20.4c.6-3.9 3.6-6 7.2-6s6.6 2.1 7.2 6"/></svg>
+        </span>
+        <span class="b-lead__txt">
+          <span class="b-lead__name" data-oa="elektriker.namn">[Elektriker]</span>
+          <span class="b-lead__role">Behörig elektriker som ansvarar för din installation</span>
+        </span>
+      </div>
+
       <h2 class="of-h2" id="dagen-h">Så går dagen till</h2>
 
       <ol class="b-line">
-        <li class="b-step">
-          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 20.5h15"/><path d="M6.5 20.5V9.8L12 5.2l5.5 4.6v10.7"/><path d="M10 20.5v-5h4v5"/></svg></span>
-          <span class="b-step__when">Innan vi kommer</span>
-          <div class="b-step__body">
-            <h3>Röj framför elcentralen</h3>
-            <p>Elektrikern behöver komma åt centralen fritt. Flytta undan det som står framför, och se till att någon är hemma och kan öppna.</p>
-            <ul class="bk-prep">
-              <li><span class="p-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span class="p-txt"><b>Fri passage</b> fram till elcentralen</span></li>
-              <li><span class="p-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span class="p-txt"><b>Någon hemma</b> under hela besöket</span></li>
-              <li><span class="p-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span class="p-txt"><b>Strömmen är av</b> under delar av arbetet. <span class="of-gap">GAP: hur länge?</span></span></li>
-            </ul>
-          </div>
-        </li>
-
         <li class="b-step">
           <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.2 2.8 5.4 13.4h5.6l-1.2 7.8 7.8-10.6h-5.6z"/></svg></span>
           <span class="b-step__when">På plats</span>
           <div class="b-step__body">
             <h3>Det här gör vi hemma hos dig</h3>
-            <div class="bk-who">
-              <span class="bk-who__photo">
-                <!-- [ELEKTRIKERBILD] profilbilden från CRM:et; silhuetten är platshållaren -->
-                <svg data-oa-photo="elektriker.profilbild_url" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20.4c.6-3.9 3.6-6 7.2-6s6.6 2.1 7.2 6"/></svg>
-              </span>
-              <span>
-                <span class="bk-who__name" data-oa="elektriker.namn">[Elektriker]</span>
-                <span class="bk-who__role">Behörig elektriker. Ringer när hen är på väg.</span>
-                <a class="bk-who__tel" href="tel:+46102657979">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 3.8h3.4l1.7 4.2-2.1 1.3a11.4 11.4 0 0 0 5.5 5.5l1.3-2.1 4.2 1.7v3.4c0 .9-.8 1.6-1.7 1.5C10.8 18.6 5.4 13.2 4.7 5.5c-.1-.9.6-1.7 1.5-1.7Z"/></svg>
-                  <span data-oa="elektriker.telefon">010-265 79 79</span>
-                </a>
-              </span>
-            </div>
             <ul class="of-work" data-oa-list="bokning.arbetsbeskrivning">
               <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
                 <div><h3>Demontering av din gamla elcentral</h3></div></li>
@@ -173,8 +184,6 @@
           <span class="b-step__when">Efteråt</span>
           <div class="b-step__body">
             <h3>Du får dokumentationen och sedan fakturan</h3>
-            <p>Elektrikern går igenom vad som gjorts innan hen lämnar. Du får uppmärkningen av gruppschemat på plats.
-              Fakturan kommer efter att arbetet är utfört, inte nu.</p>
           </div>
         </li>
       </ol>
@@ -214,7 +223,7 @@
     <!-- ÄNDRA -->
     <section class="b-card" aria-labelledby="andra-h">
       <h2 class="of-h2" id="andra-h">Behöver du ändra tiden?</h2>
-      <p class="bk-change__intro">Säg till så snart du vet, så hittar vi en ny tid. Det kostar ingenting att flytta bokningen.
+      <p class="bk-change__intro">Säg till så snart du vet, så hittar vi en ny tid.
         <span class="of-gap of-gap--note">GAP: gäller detta även vid avbokning nära inpå?</span>
       </p>
 
