@@ -66,9 +66,14 @@
     .b-step { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr);
       column-gap: 18px; padding-bottom: 34px; }
     .b-step:last-child { padding-bottom: 0; }
+    /* Skenan hade samma luft i BÅDA ändarna på pappret men inte i verkligheten:
+       top: 44px låg exakt på prickens underkant (0 px luft) medan botten hade
+       8. Och när stegavståndet flyttades från padding till margin hamnade den
+       undre änden 40 px från nästa prick. 52 = prickens 44 + 8 px luft;
+       -24 sträcker in i marginalen på 32 och lämnar samma 8 px i botten. */
     .b-step:not(:last-child)::after {
       content: ""; position: absolute; left: 21px; margin-left: -1px; width: 2px;
-      top: 44px; bottom: 8px;
+      top: 52px; bottom: -24px;
       background: linear-gradient(180deg, rgba(0,169,145,.40), rgba(0,169,145,.12));
     }
     .b-step__dot {
@@ -113,19 +118,46 @@
          ihop något, med brödtexten flush mot sin underkant (uppmätt 0 px).
          Markören krymper till etikettens egen skala och sätter sig PÅ
          etikettraden: tillsammans bildar de en enda sektionsetikett. */
-      .b-step { grid-template-columns: 24px minmax(0, 1fr); column-gap: 10px;
-                padding-bottom: 32px; }
-      .b-step:last-child { padding-bottom: 0; }
+      .b-step { grid-template-columns: 24px minmax(0, 1fr); column-gap: 10px; }
       .b-step__dot { grid-row: 1; align-self: center;
         width: 24px; height: 24px; border-width: 0; background: none; }
       .b-step__dot svg { width: 18px; height: 18px; stroke-width: 2.3; }
       .b-step__when { grid-column: 2; grid-row: 1; align-self: center; padding-top: 0; }
-      .b-step__body { grid-column: 1 / -1; grid-row: 2; padding-top: 16px; }
+      .b-step__body { grid-column: 1 / -1; grid-row: 2; padding-top: 8px; }
       .b-step:not(:last-child)::after { display: none; }
     }
-    .b-step__body > * + * { margin-top: 12px; }
     .b-step__body p { font-size: 15px; font-weight: 300; color: var(--body-ink);
       line-height: 1.6; max-width: 58ch; text-wrap: pretty; }
+
+    /* =====================================================================
+       AVSTÅNDSSTEGEN. Uppmätt före: h2 -> stegetikett 19, etikett -> h3 19,
+       moment -> moment 18. Tre olika NIVÅER på samma avstånd, alltså kunde
+       ögat inte se vad som hörde till vad, och sektionen läste som en vägg.
+       INVARIANT: avståndet kodar nivån. Varje steg upp i trädet är ett steg
+       upp på skalan, och två intilliggande nivåer får aldrig samma värde.
+
+         4   momentrubrik -> dess egen beskrivning   (tightaste paret)
+         8   stegetikett -> dess rubrik              (ETT par, inte två rader)
+        16   rubrik -> listan, och moment -> moment
+        24   listan -> materialblocket, h2 -> första steget
+        32   steg -> steg                            (högsta nivån i kortet)
+       ===================================================================== */
+    .b-step__body > * + * { margin-top: 16px; }
+    .b-step__when { padding-bottom: 0; }
+    .b-step__body { padding-top: 8px; }
+    /* .of-work bor i shared.css och delas med offertmallen: överskriv scopat,
+       rör aldrig originalet. */
+    .b-step__body .of-work { gap: 16px; }
+    /* Ett moment MED beskrivning är två textnivåer högt. Med samma 16 px till
+       nästa moment stängdes paret aldrig, och beskrivningen flöt mellan två
+       rubriker i stället för att höra till den ovanför. Momentet efter ett
+       beskrivet får därför 24 i stället för 16: 4 till sin egen beskrivning,
+       24 till nästa moment, alltså sex gånger tydligare bindning uppåt. */
+    .b-step__body .of-work li:has(p) + li { margin-top: 8px; }
+    .b-step__body .of-material { margin-top: 24px; }
+    .b-line > .b-step + .b-step { margin-top: 32px; }
+    .b-step { padding-bottom: 0; }
+    #dagen-h + .b-line { margin-top: 24px; }
   </style>
 </head>
 <body>
