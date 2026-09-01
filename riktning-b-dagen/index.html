@@ -118,12 +118,15 @@
          ihop något, med brödtexten flush mot sin underkant (uppmätt 0 px).
          Markören krymper till etikettens egen skala och sätter sig PÅ
          etikettraden: tillsammans bildar de en enda sektionsetikett. */
-      .b-step { grid-template-columns: 24px minmax(0, 1fr); column-gap: 10px; }
-      .b-step__dot { grid-row: 1; align-self: center;
-        width: 24px; height: 24px; border-width: 0; background: none; }
-      .b-step__dot svg { width: 18px; height: 18px; stroke-width: 2.3; }
-      .b-step__when { grid-column: 2; grid-row: 1; align-self: center; padding-top: 0; }
-      .b-step__body { grid-column: 1 / -1; grid-row: 2; padding-top: 8px; }
+      /* ÄGARORDER: på mobil bort med stegmarkörerna, skedesetiketterna och
+         hela »Efteråt«-steget. Tidslinjen kräver en lodrät skena för att bära
+         sin mening, och skenan finns bara på desktop. Utan den var markören
+         och etiketten dekoration som tog plats i en 320 px spalt.
+         Kvar blir en ren rubrik med sin lista. Desktop är oförändrat. */
+      .b-step { display: block; padding: 0; }
+      .b-step__dot, .b-step__when { display: none; }
+      .b-step__body { padding-top: 0; }
+      .b-line > .b-step:last-child { display: none; }
       .b-step:not(:last-child)::after { display: none; }
     }
     .b-step__body p { font-size: 15px; font-weight: 300; color: var(--body-ink);
