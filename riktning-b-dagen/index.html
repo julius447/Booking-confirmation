@@ -40,22 +40,25 @@
     .b-hero { display: flex; flex-direction: column; gap: 24px; }
     .b-hero > * + * { margin-top: 0; }
     .b-hero .bk-when { gap: 16px; }
+    /* INVARIANT: en avdelarlinje har 24 px på BÅDA sidor. Här ger .b-hero:s
+       gap de 24 ovanför linjen och padding-top de 24 under. Kort 2 bröt mot
+       invarianten och är rättat där. */
     .b-facts { display: flex; flex-direction: column; gap: 16px;
       padding-top: 24px; border-top: 1px solid var(--line); }
 
     /* Elektrikern inleder container 2. Ingen ram och ingen platta: hen ska
        läsa som en hälsning från en människa, inte som ännu ett faktakort. */
     .b-lead { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px;
-      align-items: center; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+      align-items: center; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
     .b-lead .bk-who__photo { width: 64px; height: 64px; }
     .b-lead .bk-who__photo svg { width: 32px; height: 32px; }
-    .b-lead__txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .b-lead__txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     .b-lead__name { font-size: 20px; font-weight: 600; color: var(--ink);
       line-height: 1.2; letter-spacing: -.01em; }
     .b-lead__role { font-size: 14.5px; font-weight: 400; color: var(--ink-soft);
       line-height: 1.45; text-wrap: pretty; }
     @media (max-width: 420px) {
-      .b-lead { grid-template-columns: 56px minmax(0, 1fr); gap: 14px; }
+      .b-lead { grid-template-columns: 56px minmax(0, 1fr); }
       .b-lead .bk-who__photo { width: 56px; height: 56px; }
       .b-lead .bk-who__photo svg { width: 28px; height: 28px; }
       .b-lead__name { font-size: 18.5px; }
@@ -72,20 +75,14 @@
        med offertmallen. */
     .of-material ul { grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); }
 
-    /* Arbetsblocket. Tidigare låg det inne i ett tidslinjesteg; steget och
-       dess markör togs bort på ägarorder, så scopet är nu blocket självt.
-       Avståndsstegen är oförändrad: avståndet kodar nivån.
-         4   momentrubrik -> dess egen beskrivning
-        16   rubrik -> listan, moment -> moment
-        24   efter ett moment MED beskrivning, och listan -> materialblocket */
+    /* Arbetsblocket. Tidslinjen och dess steg togs bort på ägarorder, och de
+       två snarlika rubrikerna slogs ihop till en: H2 »Det här gör vi hemma hos
+       dig«. Momenten är därmed tillbaka på h3, som shared.css redan stylar --
+       samma uppställning som offertmallen, inga dubbletter här.
+       Avståndsstegen: 24 rubrik -> innehåll, 16 moment -> moment,
+       4 momentrubrik -> dess beskrivning, 24 efter ett moment MED beskrivning
+       och från listan till materialblocket. */
     .b-work > * + * { margin-top: 16px; }
-    .b-work > h3 { font-size: clamp(18px, .8vw + 14.9px, 22px); font-weight: 600;
-      color: var(--ink); line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
-    .b-work p { font-size: 15px; font-weight: 300; color: var(--body-ink);
-      line-height: 1.6; max-width: 58ch; text-wrap: pretty; }
-    /* Momenten är barn till blockets rubrik: H2 -> H3 -> H4. */
-    .b-work .of-work h4 { font-size: 16.5px; font-weight: 600; color: var(--ink);
-      line-height: 1.3; text-wrap: balance; }
     /* .of-work bor i shared.css och delas med offertmallen: överskriv scopat. */
     .b-work .of-work { gap: 16px; }
     /* Ett moment MED beskrivning är två textnivåer högt. Med samma avstånd till
@@ -93,7 +90,8 @@
        rubriker. 4 uppåt mot 24 nedåt binder den till sin egen rubrik. */
     .b-work .of-work li:has(p) + li { margin-top: 8px; }
     .b-work .of-material { margin-top: 24px; }
-    #dagen-h + .b-work { margin-top: 24px; }
+    #arbetet-h { margin-top: 24px; }
+    #arbetet-h + .b-work { margin-top: 24px; }
   </style>
 </head>
 <body>
@@ -140,7 +138,7 @@
     </section>
 
     <!-- TIDSLINJEN: innan, på plats, efteråt -->
-    <section class="b-card" aria-labelledby="dagen-h">
+    <section class="b-card" aria-labelledby="arbetet-h">
       <!-- Elektrikern inleder besöket: hen är det första kunden vill veta om
            container 2, före vad som ska göras. Telefonnumret är borttaget på
            ägarorder; det står kvar i sidfoten. -->
@@ -155,21 +153,20 @@
         </span>
       </div>
 
-      <h2 class="of-h2" id="dagen-h">Så går arbetet till</h2>
+      <h2 class="of-h2" id="arbetet-h">Det här gör vi hemma hos dig</h2>
 
       <div class="b-work">
-        <h3>Det här gör vi hemma hos dig</h3>
         <ul class="of-work" data-oa-list="bokning.arbetsbeskrivning">
           <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-            <div><h4>Demontering av din gamla elcentral</h4></div></li>
+            <div><h3>Demontering av din gamla elcentral</h3></div></li>
           <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-            <div><h4>Installation av två modulkapslingar (2×13)</h4></div></li>
+            <div><h3>Installation av två modulkapslingar (2×13)</h3></div></li>
           <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-            <div><h4>Två jordfelsbrytare</h4><p>Huset delas upp på två jordfelsbrytare i stället för en. Vid ett jordfel blir aldrig hela huset strömlöst.</p></div></li>
+            <div><h3>Två jordfelsbrytare</h3><p>Huset delas upp på två jordfelsbrytare i stället för en. Vid ett jordfel blir aldrig hela huset strömlöst.</p></div></li>
           <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-            <div><h4>Personskyddsautomat för kyl och frys</h4><p>Egen säkring med inbyggt jordfelsskydd. Kyl och frys står kvar även vid jordfel i andra delar av anläggningen.</p></div></li>
+            <div><h3>Personskyddsautomat för kyl och frys</h3><p>Egen säkring med inbyggt jordfelsskydd. Kyl och frys står kvar även vid jordfel i andra delar av anläggningen.</p></div></li>
           <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-            <div><h4>Uppdaterat gruppschema</h4></div></li>
+            <div><h3>Uppdaterat gruppschema</h3></div></li>
         </ul>
         <details class="of-material">
           <summary>
