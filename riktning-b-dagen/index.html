@@ -24,11 +24,14 @@
     }
     .b-card > * + * { margin-top: 18px; }
 
-    /* CONTAINER 1: när, hur länge, var. Adressen skiljs från tiden med en
-       hårfin linje i stället för ett eget kort — det är samma svar på frågan
-       »vart och när kommer ni«, inte två skilda ämnen. */
-    .b-hero { display: flex; flex-direction: column; gap: 22px; }
-    .b-hero__adr { padding-top: 20px; border-top: 1px solid var(--line); }
+    /* CONTAINER 1: datumet, och under det två fakta med samma behandling.
+       Tiden och adressen är samma sorts uppgift — »när« och »var« — och får
+       därför samma ikonstorlek, samma ränna och samma typgrad. Att putsa den
+       ena ikonen ensam hade brutit paret. */
+    .b-hero { display: flex; flex-direction: column; gap: 24px; }
+    .b-hero .bk-when { gap: 4px; }
+    .b-facts { display: flex; flex-direction: column; gap: 16px;
+      padding-top: 20px; border-top: 1px solid var(--line); }
 
     /* Elektrikern inleder container 2. Ingen ram och ingen platta: hen ska
        läsa som en hälsning från en människa, inte som ännu ett faktakort. */
@@ -134,23 +137,21 @@
           <span class="w-rel" data-rel hidden></span>
           <time data-oa="bokning.dag_lang" data-datum="2026-09-24" datetime="2026-09-24">Torsdag 24 september</time>
         </h1>
-        <!-- Entydigt vad fönstret betyder. »08:00 till 12:00« ensamt kan läsas
-             både som ankomstfönster och som arbetstid, och det är skillnaden
-             mellan att kunna gå till jobbet och att inte kunna det. -->
-        <span class="w-time">Elektrikern kommer mellan <span data-oa="bokning.tidsfonster">08:00 och 12:00</span></span>
-        <span class="w-note">Hen ringer när hen är på väg. Räkna med att arbetet tar
-          <b data-oa="bokning.arbetstid" style="font-weight:600;color:var(--ink)">[GAP: hur länge]</b> från att hen är på plats.</span>
       </div>
 
-      <!-- VAR. Kunden måste kunna kontrollera att vi kommer till rätt ställe,
-           och adressen är det vanligaste felet att upptäcka i en bekräftelse. -->
-      <div class="b-hero__adr">
-        <span class="bk-where">
-          <span class="bk-where__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-5.4 6.5-10.3A6.5 6.5 0 0 0 5.5 10.7C5.5 15.6 12 21 12 21Z"/><circle cx="12" cy="10.4" r="2.3"/></svg></span>
-          <span class="bk-where__adr" data-oa="bokning.adress_rad1">[Gatuadress]
+      <!-- NÄR och VAR är ett faktapar: två uppgifter, samma behandling, samma
+           ikonstorlek. Klockslaget är ETT värde, inte ett spann — ägarorder. -->
+      <div class="b-facts">
+        <p class="bk-fact">
+          <span class="bk-fact__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12.4" r="8.4"/><path d="M12 7.6v5l3.2 2"/></svg></span>
+          <span class="bk-fact__txt">Elektrikern kommer runt <b data-oa="bokning.tid">08:00</b></span>
+        </p>
+        <p class="bk-fact">
+          <span class="bk-fact__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21.2c0 0 6.6-5.6 6.6-10.5a6.6 6.6 0 1 0-13.2 0c0 4.9 6.6 10.5 6.6 10.5Z"/><circle cx="12" cy="10.6" r="2.5"/></svg></span>
+          <span class="bk-fact__txt" data-oa="bokning.adress_rad1">[Gatuadress]
             <span data-oa="bokning.adress_rad2">[Postnummer och ort]</span>
           </span>
-        </span>
+        </p>
       </div>
     </section>
 
@@ -242,7 +243,6 @@
         <span class="t-amt" data-oa="bokning.total_text">12&nbsp;750&nbsp;kr</span>
         <span class="t-vat">inkl. moms, efter ROT-avdrag</span>
       </div>
-      <p class="bk-paynote">Ingenting ska betalas nu. Behöver vi göra något utöver det som står här frågar vi dig först.</p>
       <details class="of-legal">
         <summary>
           Villkor för uppdraget
