@@ -1,0 +1,19 @@
+<!doctype html><meta charset="utf-8"><title>c</title><style>html,body{margin:0;background:#fff}iframe{border:0;display:block;float:left}</style><body>
+<script>
+var W=new URLSearchParams(location.search).get('w')||'390';
+['/riktning-b-dagen/index.html','/_p2_fix/index.html'].forEach(function(u){
+  var f=document.createElement('iframe'); f.style.cssText='width:'+W+'px;height:1500px';
+  f.src=u; document.body.appendChild(f);
+});
+setTimeout(function(){
+  var o=[];
+  document.querySelectorAll('iframe').forEach(function(f,k){
+    var d=f.contentDocument, fr=f.getBoundingClientRect();
+    d.querySelectorAll('.b-step__dot').forEach(function(e,i){
+      var r=e.getBoundingClientRect();
+      o.push({l:(k?'NY':'NU')+'_'+(i?'dok':'blixt'),x:+(r.left+fr.left).toFixed(2),y:+(r.top+fr.top).toFixed(2),w:44,h:44});
+    });
+  });
+  document.title='T:'+JSON.stringify(o);
+},1800);
+</script>

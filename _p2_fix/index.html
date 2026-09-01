@@ -6,10 +6,10 @@
   <title>Din bokning är klar · Ampy</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
-  <link rel="preload" href="../assets/fonts/Outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="../assets/tokens.css">
-  <link rel="stylesheet" href="../assets/shared.css">
-  <link rel="stylesheet" href="../assets/bokning.css">
+  <link rel="preload" href="/assets/fonts/Outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/tokens.css">
+  <link rel="stylesheet" href="/assets/shared.css">
+  <link rel="stylesheet" href="/assets/bokning.css">
   <style>
     /* RIKTNING B — »Dagen«
        Besöket som en tidslinje: innan, på plats, efteråt. Elektrikern ligger
@@ -22,26 +22,16 @@
       box-shadow: 0 18px 44px rgba(9,11,50,.09), inset 0 1px 0 rgba(255,255,255,.6);
       padding: clamp(20px, 3vw, 32px) clamp(18px, 3.2vw, 34px);
     }
-    /* 16, inte 18: 18 ligger inte på spacingskalan. */
-    .b-card > * + * { margin-top: 16px; }
+    .b-card > * + * { margin-top: 18px; }
 
     /* CONTAINER 1: datumet, och under det två fakta med samma behandling.
        Tiden och adressen är samma sorts uppgift — »när« och »var« — och får
        därför samma ikonstorlek, samma ränna och samma typgrad. Att putsa den
        ena ikonen ensam hade brutit paret. */
-    /* Datumet vilar mitt i sitt eget utrymme. Tidigare 4 px över och 42 px
-       under, alltså tio gånger mer luft nedåt: rubrikordet var klistrat på
-       datumet medan linjen låg och seglade. Nu 16 över, 24 under. Att den
-       undre är något större är avsiktligt — linjen är en sektionsgräns och
-       rubrikordet en etikett, så de ska inte väga lika. */
-    /* .b-card > * + * lägger 18 px margin-top på varje syskon, och .b-hero är
-       en flex-kolumn med eget gap: de två ADDERADES till 42 px. Gapet äger
-       avståndet här. */
     .b-hero { display: flex; flex-direction: column; gap: 24px; }
-    .b-hero > * + * { margin-top: 0; }
-    .b-hero .bk-when { gap: 16px; }
+    .b-hero .bk-when { gap: 4px; }
     .b-facts { display: flex; flex-direction: column; gap: 16px;
-      padding-top: 24px; border-top: 1px solid var(--line); }
+      padding-top: 20px; border-top: 1px solid var(--line); }
 
     /* Elektrikern inleder container 2. Ingen ram och ingen platta: hen ska
        läsa som en hälsning från en människa, inte som ännu ett faktakort. */
@@ -106,21 +96,15 @@
     .of-material ul { grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); }
 
     @media (max-width: 560px) {
-      /* INVARIANT: en markör finns bara där en skena binder ihop den.
-         Två nästlade rännor tog 119 px av kortbredden, så brödtexten fick
-         21-26 tecken per rad. Kroppen går därför ut i full spaltbredd och
-         skenan döljs. Men då blev 44 px-noden en dekoration som inte kopplade
-         ihop något, med brödtexten flush mot sin underkant (uppmätt 0 px).
-         Markören krymper till etikettens egen skala och sätter sig PÅ
-         etikettraden: tillsammans bildar de en enda sektionsetikett. */
-      .b-step { grid-template-columns: 24px minmax(0, 1fr); column-gap: 10px;
-                padding-bottom: 32px; }
-      .b-step:last-child { padding-bottom: 0; }
-      .b-step__dot { grid-row: 1; align-self: center;
-        width: 24px; height: 24px; border-width: 0; background: none; }
-      .b-step__dot svg { width: 18px; height: 18px; stroke-width: 2.3; }
+      /* FYND: två nästlade rännor tog 119 px av kortbredden, så brödtexten
+         fick 21-26 tecken per rad. På mobil får pricken och skedesetiketten
+         en egen rad och kroppen går ut i full spaltbredd: 154 -> 216 px vid
+         320. Skenan mellan noderna döljs eftersom den inte längre binder
+         ihop något lodrätt. */
+      .b-step { column-gap: 14px; padding-bottom: 28px; }
+      .b-step__dot { grid-row: 1; }
       .b-step__when { grid-column: 2; grid-row: 1; align-self: center; padding-top: 0; }
-      .b-step__body { grid-column: 1 / -1; grid-row: 2; padding-top: 16px; }
+      .b-step__body { grid-column: 1 / -1; grid-row: 2; padding-top: 14px; }
       .b-step:not(:last-child)::after { display: none; }
     }
     .b-step__body > * + * { margin-top: 12px; }
@@ -132,7 +116,7 @@
 <div class="co-shell bk-shell">
 
   <header class="of-top co-top">
-    <img class="of-top__logo" src="../assets/ampy-logo-dark.png" alt="Ampy" width="1600" height="468">
+    <img class="of-top__logo" src="/assets/ampy-logo-dark.png" alt="Ampy" width="1600" height="468">
     <div class="of-top__meta">
       <span class="of-pill">Bokning <span data-oa="bokning.referens">#B-2026-0431</span></span>
       <span class="of-top__valid">Offert <span data-oa="offert.referens">#2026-0187</span></span>
@@ -191,7 +175,7 @@
 
       <ol class="b-line">
         <li class="b-step">
-          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.2 2.8 5.4 13.4h5.6l-1.2 7.8 7.8-10.6h-5.6z"/></svg></span>
+          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15.6 2.9 6.4 13h6.9l-4.7 8.2"/></svg></span>
           <span class="b-step__when">På plats</span>
           <div class="b-step__body">
             <h3>Det här gör vi hemma hos dig</h3>
@@ -228,7 +212,7 @@
         </li>
 
         <li class="b-step">
-          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 3.7h7L18 8.2v12.1H6.5z"/><path d="M13.5 3.7v4.5H18"/><path d="M9.6 15.6l1.8 1.8 3.3-3.6"/></svg></span>
+          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5.9 3.3h5.8l6.4 6.4v10.9H5.9z"/><path d="M11.7 3.3v6.4h6.4"/><path d="M9.2 15.9l1.9 1.9 3.5-3.8"/></svg></span>
           <span class="b-step__when">Efteråt</span>
           <div class="b-step__body">
             <h3>Du får dokumentationen och sedan fakturan</h3>
@@ -349,6 +333,6 @@
     Ampy Nordic AB · Org.nr 559254-9819 · <a href="tel:+46102657979" class="nb">010-265 79 79</a>
   </footer>
 </div>
-<script src="../assets/bokning.js"></script>
+<script src="/assets/bokning.js"></script>
 </body>
 </html>

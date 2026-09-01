@@ -6,8 +6,11 @@
    ========================================================================= */
 
 .bk-shell { max-width: 780px; margin-inline: auto; padding: 0 clamp(14px, 4vw, 28px) 64px; }
-.bk-flow  { display: flex; flex-direction: column; gap: 40px; margin-top: 40px; }
-@media (max-width: 560px) { .bk-flow { gap: 28px; margin-top: 28px; } }
+/* 48 och 32, inte 40 och 28: sektionsavståndet ska ligga på skalan
+   8/12/16/24/32/48 och vara tydligt större än det största avståndet INUTI ett
+   kort (16), annars läser sektionerna ihop till ett enda block. */
+.bk-flow  { display: flex; flex-direction: column; gap: 48px; margin-top: 48px; }
+@media (max-width: 560px) { .bk-flow { gap: 32px; margin-top: 32px; } }
 
 /* ---------- bekräftelseremsan ---------- */
 .bk-band {
