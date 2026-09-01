@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8"><title>init</title><body>
+<script>
+var W = new URLSearchParams(location.search).get('w') || '390';
+var f=document.createElement('iframe'); f.style.cssText='width:'+W+'px;height:2400px;border:0';
+f.src='/riktning-b-dagen/index.html'; document.body.appendChild(f);
+f.addEventListener('load',function(){setTimeout(function(){try{
+  var d=f.contentDocument,w=f.contentWindow;
+  d.querySelectorAll('details').forEach(function(x){x.open=true;});
+  var out={w:W, items:[]};
+  function rec(label, el){
+    if(!el) { out.items.push({label:label, missing:true}); return; }
+    var r=el.getBoundingClientRect(), cs=w.getComputedStyle(el);
+    var svg=el.tagName.toLowerCase()==='svg'?el:el.querySelector('svg');
+    var sr=svg?svg.getBoundingClientRect():null, ss=svg?w.getComputedStyle(svg):null;
+    out.items.push({label:label,
+      box:[+r.width.toFixed(2),+r.height.toFixed(2)],
+      x:+r.left.toFixed(1), y:+(r.top+w.scrollY).toFixed(1),
+      radius:cs.borderRadius, border:cs.borderWidth+' '+cs.borderColor, bg:cs.backgroundColor,
+      svg: sr?{size:[+sr.width.toFixed(2),+sr.height.toFixed(2)],
+        sw:ss.strokeWidth, stroke:ss.stroke, fill:ss.fill,
+        cap:ss.strokeLinecap, join:ss.strokeLinejoin,
+        vb:svg.getAttribute('viewBox'),
+        eff:+(parseFloat(ss.strokeWidth)*sr.width/parseFloat((svg.getAttribute('viewBox')||'0 0 24 24').split(/\s+/)[2])).toFixed(3)}:null
+    });
+  }
+  var facts=d.querySelectorAll('.bk-fact__ico');
+  rec('fact-klocka(34)', facts[0]); rec('fact-karta(34)', facts[1]);
+  var dots=d.querySelectorAll('.b-step__dot');
+  rec('dot-blixt(44)', dots[0]); rec('dot-dokument(44)', dots[1]);
+  var checks=d.querySelectorAll('.of-work .w-check');
+  rec('bock-1(26)', checks[0]); rec('bock-3(26)', checks[2]);
+  rec('lead-photo(64)', d.querySelector('.b-lead .bk-who__photo'));
+  rec('m-arrow-material', d.querySelector('.of-material summary .m-arrow'));
+  rec('m-arrow-legal', d.querySelector('.of-legal summary .m-arrow'));
+  rec('send-pil-fraga', d.querySelector('#fraga-panel .of-btn-send svg'));
+  // materialpunkten ::before
+  var mli=d.querySelector('.of-material ul li');
+  if(mli){var b=w.getComputedStyle(mli,'::before');
+    out.items.push({label:'material-punkt(::before)',box:[b.width,b.height],radius:b.borderRadius,bg:b.backgroundColor,
+      left:b.left, top:b.top, liFont:w.getComputedStyle(mli).fontSize});}
+  document.title='T:'+JSON.stringify(out);
+}catch(e){document.title='CATCH:'+e.message+'|'+e.stack}},1400);});
+</script>
