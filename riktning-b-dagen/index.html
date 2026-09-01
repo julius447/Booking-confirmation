@@ -71,8 +71,39 @@
       color: var(--teal-ink); padding-top: 5px;
     }
     .b-step__body { grid-column: 2; grid-row: 2; padding-top: 6px; }
-    .b-step__body > h3 { font-size: 22px; font-weight: 600; color: var(--ink);
-      line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
+    /* Samma lutning som .of-h2 (clamp(20px,.8vw+17px,24px)), 2,1 px under den
+       vid varje bredd. Låst 22 px gjorde stegrubriken STÖRRE än sin egen
+       sektionsrubrik på varje telefon: 22 mot 20 vid 320. */
+    .b-step__body > h3 { font-size: clamp(18px, .8vw + 14.9px, 22px); font-weight: 600;
+      color: var(--ink); line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
+    /* Momenten är barn till skedet, inte syskon: H2 -> H3 -> H4.
+       Renderingen är pixelidentisk med den tidigare h3-stilen. */
+    .b-step__body .of-work h4 { font-size: 16.5px; font-weight: 600; color: var(--ink);
+      line-height: 1.3; text-wrap: balance; }
+
+    /* FYND: tidsfönstret bröts mitt i värdet, »...mellan 08:00 och« / »12:00«,
+       vid 320/360/390. Meningen får brytas, värdet får inte. */
+    .bk-when .w-time [data-oa] { white-space: nowrap; }
+
+    /* FYND: materiallistans spår var minmax(210px,1fr) i en 190 px behållare
+       vid 320, så raderna målades utanför kortet och hela sidan gick att dra
+       i sidled. min() slår bara till under 210 px; allt från 360 och uppåt
+       renderar identiskt. Scopat hit i stället för i shared.css, som delas
+       med offertmallen. */
+    .of-material ul { grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); }
+
+    @media (max-width: 560px) {
+      /* FYND: två nästlade rännor tog 119 px av kortbredden, så brödtexten
+         fick 21-26 tecken per rad. På mobil får pricken och skedesetiketten
+         en egen rad och kroppen går ut i full spaltbredd: 154 -> 216 px vid
+         320. Skenan mellan noderna döljs eftersom den inte längre binder
+         ihop något lodrätt. */
+      .b-step { column-gap: 14px; padding-bottom: 28px; }
+      .b-step__dot { grid-row: 1; }
+      .b-step__when { grid-column: 2; grid-row: 1; align-self: center; padding-top: 0; }
+      .b-step__body { grid-column: 1 / -1; grid-row: 2; padding-top: 14px; }
+      .b-step:not(:last-child)::after { display: none; }
+    }
     .b-step__body > * + * { margin-top: 12px; }
     .b-step__body p { font-size: 15px; font-weight: 300; color: var(--body-ink);
       line-height: 1.6; max-width: 58ch; text-wrap: pretty; }
@@ -149,15 +180,15 @@
             <h3>Det här gör vi hemma hos dig</h3>
             <ul class="of-work" data-oa-list="bokning.arbetsbeskrivning">
               <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h3>Demontering av din gamla elcentral</h3></div></li>
+                <div><h4>Demontering av din gamla elcentral</h4></div></li>
               <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h3>Installation av två modulkapslingar (2×13)</h3></div></li>
+                <div><h4>Installation av två modulkapslingar (2×13)</h4></div></li>
               <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h3>Två jordfelsbrytare</h3><p>Huset delas upp på två jordfelsbrytare i stället för en. Vid ett jordfel blir aldrig hela huset strömlöst.</p></div></li>
+                <div><h4>Två jordfelsbrytare</h4><p>Huset delas upp på två jordfelsbrytare i stället för en. Vid ett jordfel blir aldrig hela huset strömlöst.</p></div></li>
               <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h3>Personskyddsautomat för kyl och frys</h3><p>Egen säkring med inbyggt jordfelsskydd. Kyl och frys står kvar även vid jordfel i andra delar av anläggningen.</p></div></li>
+                <div><h4>Personskyddsautomat för kyl och frys</h4><p>Egen säkring med inbyggt jordfelsskydd. Kyl och frys står kvar även vid jordfel i andra delar av anläggningen.</p></div></li>
               <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h3>Uppdaterat gruppschema</h3></div></li>
+                <div><h4>Uppdaterat gruppschema</h4></div></li>
             </ul>
             <details class="of-material">
               <summary>
@@ -197,8 +228,12 @@
           <span class="lbl">Komplett arbete</span>
           <span class="amt" data-oa="bokning.grundbelopp_text">11&nbsp;900&nbsp;kr</span>
         </div>
-        <div class="bk-row bk-row--add">
-          <span class="lbl">Extra arbetstimme på plats</span>
+        <!-- Raden såg exakt likadan ut som »Komplett arbete« och saknade krok,
+             så en kund UTAN tillägg fick både raden och en total som inte gick
+             ihop. [GAP] Hur renderas fler än ETT tillägg? bokning.js hanterar
+             bara tom mot icke-tom lista, inte n rader. -->
+        <div class="bk-row bk-row--add" data-oa-tillagg>
+          <span class="lbl"><span class="r-tag">Tillägg</span>Extra arbetstimme på plats</span>
           <span class="amt">+&nbsp;850&nbsp;kr</span>
         </div>
       </div>
@@ -222,72 +257,75 @@
 
     <!-- ÄNDRA -->
     <section class="b-card" aria-labelledby="andra-h">
-      <h2 class="of-h2" id="andra-h">Behöver du ändra tiden?</h2>
-      <p class="bk-change__intro">Säg till så snart du vet, så hittar vi en ny tid.
+      <h2 class="of-h2" id="andra-h">Behöver du höra av dig?</h2>
+      <p class="bk-change__intro">Fråga om något är oklart, till exempel om adressen inte stämmer. Behöver tiden flyttas, säg till så snart du vet, så hittar vi en ny.
         <span class="of-gap of-gap--note">GAP: gäller detta även vid avbokning nära inpå?</span>
       </p>
 
+      <!-- Panelerna ligger INNE i knappraden, direkt efter sin egen knapp.
+           Tidigare låg alla tre efter alla knappar, så »Ställ en fråga« öppnade
+           en panel 142 px längre ned, under »Avboka«. -->
       <div class="bk-change__btns">
         <button class="of-btn-secondary" type="button" id="fraga-btn" aria-expanded="false" aria-controls="fraga-panel">Ställ en fråga</button>
+        <div class="bk-panel" id="fraga-panel">
+          <h3>Ställ en fråga</h3>
+          <p class="p-hint">Stämmer inte adressen, eller undrar du över något inför besöket? Skriv här så svarar vi.</p>
+          <div class="bk-field">
+            <label for="b-fraga">Vad undrar du över?</label>
+            <textarea id="b-fraga" data-varfor placeholder="Till exempel: kan ni titta på uttaget i garaget samtidigt?"></textarea>
+          </div>
+          <button class="of-btn-send" type="button" data-skicka>
+            <span>Skicka frågan</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="bk-status" role="status" id="b-fraga-status"></p>
+        </div>
         <button class="of-btn-secondary" type="button" id="omboka-btn" aria-expanded="false" aria-controls="omboka-panel">Föreslå en ny tid</button>
+        <div class="bk-panel" id="omboka-panel">
+          <h3>Föreslå en ny tid</h3>
+          <p class="p-hint">Vi bekräftar innan något ändras. Den nuvarande tiden står kvar tills du hört av oss.</p>
+          <div class="bk-two">
+            <div class="bk-field">
+              <label for="b-datum">Vilket datum skulle passa?</label>
+              <input type="date" id="b-datum" data-nytt-datum>
+            </div>
+            <div class="bk-field">
+              <label for="b-fonster">När på dagen?</label>
+              <select id="b-fonster" data-nytt-fonster>
+                <option value="fm">Förmiddag</option>
+                <option value="em">Eftermiddag</option>
+                <option value="nar">Spelar ingen roll</option>
+              </select>
+            </div>
+          </div>
+          <div class="bk-field">
+            <label for="b-varfor-om">Varför passar inte den bokade tiden?</label>
+            <textarea id="b-varfor-om" data-varfor placeholder="Till exempel: jag är bortrest den veckan"></textarea>
+          </div>
+          <button class="of-btn-send" type="button" data-skicka>
+            <span>Skicka förslaget</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="bk-status" role="status" id="b-omboka-status"></p>
+        </div>
         <button class="of-btn-secondary" type="button" id="avboka-btn" aria-expanded="false" aria-controls="avboka-panel">Avboka</button>
-      </div>
-
-      <div class="bk-panel" id="fraga-panel">
-        <h3>Ställ en fråga</h3>
-        <p class="p-hint">Stämmer inte adressen, eller undrar du över något inför besöket? Skriv här så svarar vi.</p>
-        <div class="bk-field">
-          <label for="b-fraga">Vad undrar du över?</label>
-          <textarea id="b-fraga" data-varfor placeholder="Till exempel: kan ni titta på uttaget i garaget samtidigt?"></textarea>
-        </div>
-        <button class="of-btn-send" type="button" data-skicka>
-          <span>Skicka frågan</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
-        </button>
-        <p class="bk-status" role="status"></p>
-      </div>
-
-      <div class="bk-panel" id="omboka-panel">
-        <h3>Föreslå en ny tid</h3>
-        <p class="p-hint">Vi bekräftar innan något ändras. Den nuvarande tiden står kvar tills du hört av oss.</p>
-        <div class="bk-two">
+        <div class="bk-panel" id="avboka-panel">
+          <h3>Avboka</h3>
+          <p class="p-hint">Vill du hellre flytta tiden än att avboka helt? Använd knappen ovanför.</p>
           <div class="bk-field">
-            <label for="b-datum">Vilket datum skulle passa?</label>
-            <input type="date" id="b-datum" data-nytt-datum>
+            <label for="b-varfor-av">Varför avbokar du?</label>
+            <textarea id="b-varfor-av" data-varfor placeholder="Skriv kort vad som hände"></textarea>
           </div>
-          <div class="bk-field">
-            <label for="b-fonster">När på dagen?</label>
-            <select id="b-fonster" data-nytt-fonster>
-              <option value="fm">Förmiddag</option>
-              <option value="em">Eftermiddag</option>
-              <option value="nar">Spelar ingen roll</option>
-            </select>
-          </div>
+          <button class="of-btn-send" type="button" data-skicka>
+            <span>Avboka tiden</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </button>
+          <p class="bk-status" role="status" id="b-avboka-status"></p>
         </div>
-        <div class="bk-field">
-          <label for="b-varfor-om">Varför passar inte den bokade tiden?</label>
-          <textarea id="b-varfor-om" data-varfor placeholder="Till exempel: jag är bortrest den veckan"></textarea>
-        </div>
-        <button class="of-btn-send" type="button" data-skicka>
-          <span>Skicka förslaget</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
-        </button>
-        <p class="bk-status" role="status"></p>
       </div>
 
-      <div class="bk-panel" id="avboka-panel">
-        <h3>Avboka</h3>
-        <p class="p-hint">Vill du hellre flytta tiden än att avboka helt? Använd knappen ovanför.</p>
-        <div class="bk-field">
-          <label for="b-varfor-av">Varför avbokar du?</label>
-          <textarea id="b-varfor-av" data-varfor placeholder="Skriv kort vad som hände"></textarea>
-        </div>
-        <button class="of-btn-send" type="button" data-skicka>
-          <span>Avboka tiden</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
-        </button>
-        <p class="bk-status" role="status"></p>
-      </div>
+
+
     </section>
   </main>
 

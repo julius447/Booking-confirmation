@@ -52,10 +52,19 @@
         if (!f || !String(f.value).trim()) {
           status.className = "bk-status is-block";
           status.textContent = kravFalt[i].saknas;
-          if (f) f.focus();
+          if (f) {
+            // Utan detta lever felet i en fristående role="status" medan fokus
+            // står i fältet: en skärmläsare kopplar dem aldrig till varandra.
+            f.setAttribute("aria-invalid", "true");
+            if (status.id) f.setAttribute("aria-describedby", status.id);
+            f.focus();
+          }
           return;
         }
       }
+      panel.querySelectorAll("[aria-invalid]").forEach(function (n) {
+        n.removeAttribute("aria-invalid"); n.removeAttribute("aria-describedby");
+      });
       status.className = "bk-status is-ok";
       status.textContent = klartText;
       knapp.disabled = true;
@@ -75,7 +84,7 @@
   }
   if (avboka.p) {
     skickaKnapp(avboka.p, [
-      { sel: "[data-varfor]", saknas: "Skriv kort varför du avbokar. Det hjälper oss mer än tystnad." }
+      { sel: "[data-varfor]", saknas: "Skriv kort varför du avbokar innan du skickar." }
     ], "Avbokat. Vi har tagit emot ditt besked och hör inte av oss om den här tiden igen.");
   }
   if (fraga.p) {
