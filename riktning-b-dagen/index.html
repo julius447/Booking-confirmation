@@ -219,8 +219,23 @@
       </p>
 
       <div class="bk-change__btns">
+        <button class="of-btn-secondary" type="button" id="fraga-btn" aria-expanded="false" aria-controls="fraga-panel">Ställ en fråga</button>
         <button class="of-btn-secondary" type="button" id="omboka-btn" aria-expanded="false" aria-controls="omboka-panel">Föreslå en ny tid</button>
         <button class="of-btn-secondary" type="button" id="avboka-btn" aria-expanded="false" aria-controls="avboka-panel">Avboka</button>
+      </div>
+
+      <div class="bk-panel" id="fraga-panel">
+        <h3>Ställ en fråga</h3>
+        <p class="p-hint">Stämmer inte adressen, eller undrar du över något inför besöket? Skriv här så svarar vi.</p>
+        <div class="bk-field">
+          <label for="b-fraga">Vad undrar du över?</label>
+          <textarea id="b-fraga" data-varfor placeholder="Till exempel: kan ni titta på uttaget i garaget samtidigt?"></textarea>
+        </div>
+        <button class="of-btn-send" type="button" data-skicka>
+          <span>Skicka frågan</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </button>
+        <p class="bk-status" role="status"></p>
       </div>
 
       <div class="bk-panel" id="omboka-panel">

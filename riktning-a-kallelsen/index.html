@@ -56,9 +56,21 @@
     <section class="a-hero" aria-labelledby="nar-h">
       <div class="bk-when">
         <span class="w-cap" id="nar-h">Vi kommer</span>
-        <span class="w-day" data-oa="bokning.dag_lang">Torsdag 24 september</span>
-        <span class="w-time" data-oa="bokning.tidsfonster">08:00 till 12:00</span>
-        <span class="w-note">Elektrikern ringer när hen är på väg. Någon behöver vara hemma och kunna visa vägen till elcentralen.</span>
+        <!-- <h1>, inte <span>: sidans viktigaste innehåll ska vara sidans
+             rubrik. Sidan hade tidigare ingen h1 alls.
+             <time datetime> gör datumet maskinläsbart.
+             .w-rel fylls av bokning.js med »Idag« / »Imorgon« när det stämmer. -->
+        <h1 class="bk-when__day">
+          <span class="w-rel" data-rel hidden></span>
+          <time data-oa="bokning.dag_lang" data-datum="2026-09-24" datetime="2026-09-24">Torsdag 24 september</time>
+        </h1>
+        <!-- Entydigt vad fönstret betyder. »08:00 till 12:00« ensamt kan läsas
+             både som ankomstfönster och som arbetstid, och det är skillnaden
+             mellan att kunna gå till jobbet och att inte kunna det. -->
+        <span class="w-time">Elektrikern kommer mellan <span data-oa="bokning.tidsfonster">08:00 och 12:00</span></span>
+        <span class="w-note">Hen ringer när hen är på väg. Räkna med att arbetet tar
+          <b data-oa="bokning.arbetstid" style="font-weight:600;color:var(--ink)">[GAP: hur länge]</b> från att hen är på plats.
+          Någon behöver vara hemma och kunna visa vägen till elcentralen.</span>
         <button class="bk-cal" type="button" data-kalender
                 data-start="20260924T060000Z" data-slut="20260924T100000Z"
                 data-titel="Elektriker från Ampy" data-uid="B-2026-0431"
@@ -67,6 +79,18 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3M17 3v3"/><path d="M3.8 8.6h16.4"/><path d="M4.6 5.6h14.8v14.8H4.6z"/></svg>
           Lägg till i kalendern
         </button>
+      </div>
+
+      <!-- VAR. Saknades helt: kunden måste kunna kontrollera att vi kommer
+           till rätt ställe, och det är också det vanligaste felet att upptäcka
+           i en bekräftelse. -->
+      <div class="a-hero__split">
+        <div class="bk-where">
+          <span class="bk-where__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-5.4 6.5-10.3A6.5 6.5 0 0 0 5.5 10.7C5.5 15.6 12 21 12 21Z"/><circle cx="12" cy="10.4" r="2.3"/></svg></span>
+          <span class="bk-where__adr" data-oa="bokning.adress_rad1">[Gatuadress]
+            <span data-oa="bokning.adress_rad2">[Postnummer och ort]</span>
+          </span>
+        </div>
       </div>
 
       <div class="a-hero__split">
@@ -130,8 +154,10 @@
           <span class="lbl">Komplett arbete</span>
           <span class="amt" data-oa="bokning.grundbelopp_text">11&nbsp;900&nbsp;kr</span>
         </div>
-        <div class="bk-row bk-row--add">
-          <span class="lbl">Extra arbetstimme på plats</span>
+        <!-- Tilläggen är valfria per bokning. Finns inga tas hela raden bort
+             av bokning.js; »eventuella tillägg« betyder att listan kan vara tom. -->
+        <div class="bk-row bk-row--add" data-oa-tillagg>
+          <span class="lbl"><span class="r-tag">Tillägg</span>Extra arbetstimme på plats</span>
           <span class="amt">+&nbsp;850&nbsp;kr</span>
         </div>
       </div>
@@ -160,14 +186,32 @@
 
     <!-- 5 · ÄNDRA. Sist, stilla, men fullt synlig. -->
     <section class="a-card" aria-labelledby="andra-h">
-      <h2 class="of-h2" id="andra-h">Behöver du ändra tiden?</h2>
-      <p class="bk-change__intro">Säg till så snart du vet, så hittar vi en ny tid. Det kostar ingenting att flytta bokningen.
+      <h2 class="of-h2" id="andra-h">Behöver du ändra något?</h2>
+      <p class="bk-change__intro">Säg till så snart du vet, så löser vi det. Det kostar ingenting att flytta bokningen.
         <span class="of-gap of-gap--note">GAP: gäller detta även vid avbokning nära inpå? Framkörning/minimidebitering är obesvarad.</span>
       </p>
 
+      <!-- Tre vägar, inte två. Omboka och avboka är båda ingripande, och en
+           kund som bara vill säga »adressen är fel« eller »kan ni titta på
+           uttaget i garaget också« hade ingen väg alls. -->
       <div class="bk-change__btns">
+        <button class="of-btn-secondary" type="button" id="fraga-btn" aria-expanded="false" aria-controls="fraga-panel">Ställ en fråga</button>
         <button class="of-btn-secondary" type="button" id="omboka-btn" aria-expanded="false" aria-controls="omboka-panel">Föreslå en ny tid</button>
-        <button class="of-btn-secondary" type="button" id="avboka-btn" aria-expanded="false" aria-controls="avboka-panel">Avboka</button>
+        <button class="of-btn-tertiary" type="button" id="avboka-btn" aria-expanded="false" aria-controls="avboka-panel">Avboka</button>
+      </div>
+
+      <div class="bk-panel" id="fraga-panel">
+        <h3>Ställ en fråga</h3>
+        <p class="p-hint">Stämmer inte adressen, eller undrar du över något inför besöket? Skriv här så svarar vi.</p>
+        <div class="bk-field">
+          <label for="a-fraga">Vad undrar du över?</label>
+          <textarea id="a-fraga" data-varfor placeholder="Till exempel: kan ni titta på uttaget i garaget samtidigt?"></textarea>
+        </div>
+        <button class="of-btn-send" type="button" data-skicka>
+          <span>Skicka frågan</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </button>
+        <p class="bk-status" role="status"></p>
       </div>
 
       <div class="bk-panel" id="omboka-panel">

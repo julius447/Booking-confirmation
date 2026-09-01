@@ -11,32 +11,31 @@
   /* ---- omboka / avboka: ömsesidigt uteslutande paneler ------------------ */
   function el(id) { return document.getElementById(id); }
 
-  var omboka = { b: el("omboka-btn"), p: el("omboka-panel") };
-  var avboka = { b: el("avboka-btn"), p: el("avboka-panel") };
+  // Tre vägar: fråga, omboka, avboka. Bara en öppen åt gången — flera öppna
+  // paneler ger flera motstridiga uppmaningar under varandra.
+  var vagar = ["fraga", "omboka", "avboka"].map(function (n) {
+    return { b: el(n + "-btn"), p: el(n + "-panel") };
+  }).filter(function (v) { return v.b && v.p; });
 
-  function stang(x) {
-    if (!x.p) return;
-    x.p.classList.remove("visible");
-    if (x.b) x.b.setAttribute("aria-expanded", "false");
-  }
-
-  function koppla(mig, andra) {
-    if (!mig.b || !mig.p) return;
+  vagar.forEach(function (mig) {
     mig.b.addEventListener("click", function () {
       var oppen = mig.p.classList.toggle("visible");
       mig.b.setAttribute("aria-expanded", oppen ? "true" : "false");
-      if (oppen) {
-        // Två öppna paneler samtidigt ger två motstridiga uppmaningar under
-        // varandra. Samma regel som på offertsidan.
-        stang(andra);
-        mig.p.scrollIntoView({ block: "nearest" });
-        var forst = mig.p.querySelector("input, select, textarea");
-        if (forst) forst.focus({ preventScroll: true });
-      }
+      if (!oppen) return;
+      vagar.forEach(function (annan) {
+        if (annan === mig) return;
+        annan.p.classList.remove("visible");
+        annan.b.setAttribute("aria-expanded", "false");
+      });
+      mig.p.scrollIntoView({ block: "nearest" });
+      var forst = mig.p.querySelector("input, select, textarea");
+      if (forst) forst.focus({ preventScroll: true });
     });
-  }
-  koppla(omboka, avboka);
-  koppla(avboka, omboka);
+  });
+
+  var omboka = { p: el("omboka-panel") };
+  var avboka = { p: el("avboka-panel") };
+  var fraga  = { p: el("fraga-panel") };
 
   /* ---- anledningen är obligatorisk -------------------------------------
      Ägarkrav: kunden måste förklara varför, både vid omboka och avboka.
@@ -79,6 +78,46 @@
       { sel: "[data-varfor]", saknas: "Skriv kort varför du avbokar. Det hjälper oss mer än tystnad." }
     ], "Avbokat. Vi har tagit emot ditt besked och hör inte av oss om den här tiden igen.");
   }
+  if (fraga.p) {
+    skickaKnapp(fraga.p, [
+      { sel: "[data-varfor]", saknas: "Skriv din fråga i rutan först, så vet vi vad du undrar över." }
+    ], "Skickat. Du får svar inom 24 timmar på vardagar. Tiden står kvar oförändrad.");
+  }
+
+  /* ---- relativ tid ------------------------------------------------------
+     »Imorgon« framför datumet. Sidan öppnas flera gånger — när den kommer,
+     dagen innan, på morgonen — och relativ tid är det som gör den levande
+     i stället för statisk. Räknas i lokal tid mot dygnsgränser, inte i
+     timmar, så »imorgon« betyder imorgon och inte »om 24 timmar«.          */
+  (function () {
+    var t = document.querySelector("time[data-datum]");
+    var ut = document.querySelector("[data-rel]");
+    if (!t || !ut) return;
+    var d = t.getAttribute("data-datum").split("-").map(Number);
+    var mal = new Date(d[0], d[1] - 1, d[2]);
+    var idag = new Date(); idag.setHours(0, 0, 0, 0);
+    var dagar = Math.round((mal - idag) / 86400000);
+    var ord = dagar === 0 ? "Idag" : dagar === 1 ? "Imorgon" : dagar === 2 ? "I övermorgon" : null;
+    if (!ord) return;
+    ut.textContent = ord + ",";
+    ut.hidden = false;
+    // Veckodagen gemeniseras när den följer efter ett komma. CRM:et levererar
+    // »Torsdag 24 september« som fristående sträng; »Imorgon, Torsdag« är fel.
+    var txt = t.textContent;
+    if (txt && txt[0] === txt[0].toUpperCase()) {
+      t.textContent = txt[0].toLowerCase() + txt.slice(1);
+    }
+  })();
+
+  /* ---- tillägg är valfria ----------------------------------------------
+     »Eventuella tillägg« betyder att listan kan vara tom. En tom tilläggsrad
+     med etiketten kvar hade sett ut som ett fel.                            */
+  (function () {
+    var d = window.AMPY_BOKNING;
+    if (!d || !Array.isArray(d["bokning.tillagg"])) return;
+    var rad = document.querySelector("[data-oa-tillagg]");
+    if (rad && !d["bokning.tillagg"].length) rad.remove();
+  })();
 
   /* ---- lägg till i kalendern -------------------------------------------
      .ics byggs i webbläsaren av det som står på sidan, så att kalendern

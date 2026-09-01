@@ -153,3 +153,54 @@ Ställ tre frågor till varje riktning, på mobil:
 3. **Om jag måste omboka, känner jag mig dum?**
 
 Min rekommendation står i README, men frågorna ovan avgör bättre än jag gör.
+
+---
+
+# Del 2 · Genomgången av riktning A
+
+Skriven efter att A valts. Allt nedan är uppmätt i webbläsaren, inte tyckt.
+
+## Vad mätningen hittade
+
+| # | Fynd | Bevis | Åtgärdat |
+|---|---|---|---|
+| 1 | **Sidan hade ingen `<h1>`.** Datumet, sidans viktigaste innehåll, låg i en `<span>`. I rubrikträdet fanns bara H2 och H3, alltså ingen sidrubrik alls för en skärmläsare. | `document.querySelectorAll('h1').length === 0` | Datumet är nu `<h1>` med `<time datetime>` |
+| 2 | **Ingen adress.** En bokningsbekräftelse som aldrig säger var. Det är dessutom det vanligaste felet en kund upptäcker i en bekräftelse. | Sökning på adressmönster i sidtexten: noll träffar | Adressblock med datakrokar, direkt under tiden |
+| 3 | **Totalplattan var omkastad.** Beloppet låg till vänster och etiketten till höger, tvärtemot varje annan rad på sidan och tvärtemot offertmallen. | Uppmätt vid 390 px: belopp x18–117, etikett x131–303 | Explicit rutnätsplacering. Nu etikett x18, belopp högerställt |
+| 4 | **»08:00 till 12:00« var tvetydigt.** Ankomstfönster eller arbetstid? Skillnaden avgör om kunden kan gå till jobbet eller inte. | Ingen text på sidan angav vilket | »Elektrikern kommer mellan 08:00 och 12:00«, plus en rad om hur länge arbetet tar |
+| 5 | **Ingen väg att bara fråga.** De enda två handlingarna var omboka och avboka, båda ingripande. En kund som ville säga »adressen är fel« eller »kan ni titta på uttaget i garaget också« hade ingen väg alls. | Två knappar i ändra-sektionen | Tre vägar: Ställ en fråga · Föreslå en ny tid · Avboka |
+| 6 | **»Tillägg«-etiketten var ett CSS-`::before`.** Den fanns varken i tillgänglighetsträdet, i utskriftens textlager eller vid kopiering. | `/tillägg/i` mot sidtexten: falskt | Riktig text i markupen |
+| 7 | **Tilläggsraden var hårdkodad** och kunde inte försvinna. Kravet säger »eventuella tillägg«, alltså kan listan vara tom, och en tom rad med etiketten kvar hade sett ut som ett fel. | Ingen datakrok på raden | Datakrok; tom lista tar bort raden |
+| 8 | **Ingen relativ tid.** Sidan öppnas flera gånger, och »Torsdag 24 september« säger mindre än »Imorgon« när det är imorgon. | Sökning på idag/imorgon: noll träffar | »Idag« / »Imorgon« / »I övermorgon« sätts i webbläsaren, räknat mot dygnsgränser och inte i timmar |
+| 9 | **Elektrikernamnet låg på 19 px mot sektionsrubrikens 20,1.** Platt steg, och namnet är semantiskt ingen rubrik. | Uppmätt | 17,5 px |
+
+Kontrasten mättes på sex textytor och låg mellan 5,75:1 och 18,24:1, alltså med marginal
+över kravet. Inga träffytor under 44 × 44 px vid någon bredd. Noll horisontellt överflöde
+vid 320, 390, 768 och 1440. Långa namn och långa arbetsrader spränger inte layouten.
+Utskriften innehåller allt, inklusive materiallistan och villkorstexten.
+
+## En detalj värd att nämna
+
+Veckodagen gemeniseras när den följer efter »Imorgon,«. CRM:et levererar
+»Torsdag 24 september« som fristående sträng, och »Imorgon, Torsdag« är inte svenska.
+
+## Kvarstående luckor
+
+Tre saker kan inte fyllas i utan dig. De står som markerade platshållare, aldrig som
+gissningar:
+
+1. **Hur länge arbetet tar** från att elektrikern är på plats. Det är den enskilt viktigaste
+   uppgiften för en kund som ska planera sin dag.
+2. **Vad en sen avbokning kostar.** Framkörning och minimidebitering är en öppen grind sedan
+   tidigare.
+3. **Om kunden behöver göra något för ROT-avdraget** inför besöket.
+
+## Två tillstånd som inte är byggda
+
+- **Besöket har passerat.** Öppnar kunden länken dagen efter står det fortfarande
+  »Vi kommer«. Samma klass av defekt som en utgången offert utan utgångsläge.
+- **Redan ombokad eller avbokad.** Sidan renderar som en aktiv bokning även efter att
+  kunden avbokat.
+
+Båda kräver ett beslut om vad kunden ska se, och sedan en flagga från CRM:et. Säg till så
+bygger jag dem.

@@ -26,10 +26,13 @@
   font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
   color: var(--faint);
 }
-.bk-when .w-day {
+h1.bk-when__day, .bk-when .w-day {
   font-size: clamp(30px, 5.5vw, 46px); font-weight: 600; letter-spacing: -.025em;
   line-height: 1.05; color: var(--ink); text-wrap: balance;
 }
+/* »Imorgon« framför datumet. Sidan öppnas flera gånger, och relativ tid är
+   det som gör den levande i stället för statisk. Sätts av bokning.js. */
+.bk-when .w-rel { display: block; color: var(--teal-ink); }
 .bk-when .w-time {
   font-size: clamp(17px, 2.2vw, 20px); font-weight: 500; color: var(--teal-ink);
   font-variant-numeric: tabular-nums;
@@ -48,6 +51,17 @@
 .bk-cal svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2;
   stroke-linecap: round; stroke-linejoin: round; }
 
+/* ---------- VAR: adressen. Saknades helt; kunden måste kunna kontrollera
+   att vi kommer till rätt ställe. ---------- */
+.bk-where { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; align-items: start; }
+.bk-where__ico { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--teal-soft); margin-top: 1px; }
+.bk-where__ico svg { width: 14px; height: 14px; fill: none; stroke: var(--teal-ink);
+  stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.bk-where__adr { font-size: 15.5px; font-weight: 500; color: var(--ink); line-height: 1.45; }
+.bk-where__adr span { display: block; font-weight: 400; color: var(--ink-soft); }
+.bk-where__fel { display: inline-block; margin-top: 6px; font-size: 13.5px; color: var(--muted); }
+
 /* ---------- VEM: elektrikern ---------- */
 .bk-who { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 18px; align-items: center; }
 .bk-who__photo {
@@ -59,7 +73,7 @@
 .bk-who__photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
 .bk-who__photo svg { width: 36px; height: 36px; fill: none; stroke: rgba(255,255,255,.92);
   stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.bk-who__name { font-size: 19px; font-weight: 600; color: var(--ink); line-height: 1.25; }
+.bk-who__name { font-size: 17.5px; font-weight: 600; color: var(--ink); line-height: 1.25; }
 .bk-who__role { display: block; margin-top: 2px; font-size: 13.5px; font-weight: 400; color: var(--ink-soft); }
 .bk-who__tel {
   display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 4px;
@@ -80,8 +94,10 @@
 .bk-row .lbl { font-size: 15px; font-weight: 400; color: var(--body-ink); }
 .bk-row .amt { font-size: 15px; font-weight: 600; color: var(--ink);
   font-variant-numeric: tabular-nums; white-space: nowrap; }
-.bk-row--add .lbl::before {
-  content: "Tillägg"; display: block; font-size: 11px; font-weight: 700;
+/* Etiketten är riktig text i markupen, inte ett ::before. Som pseudo-element
+   syntes den varken för skärmläsaren eller vid kopiering. */
+.bk-row .r-tag {
+  display: block; font-size: 11px; font-weight: 700;
   letter-spacing: .1em; text-transform: uppercase; color: var(--teal-ink); margin-bottom: 2px;
 }
 .bk-total {
@@ -89,12 +105,19 @@
   align-items: baseline; margin-top: 16px; padding: 16px 18px;
   border-radius: var(--r-md); background: var(--teal-soft);
 }
-.bk-total .t-lbl { font-size: 12px; font-weight: 700; letter-spacing: .1em;
+/* Explicit placering. Utan den hamnade beloppet i kolumn 1 och etiketten i
+   kolumn 2: .t-amt deklarerar en egen rad, och autoplaceringen tog då första
+   lediga cell i kolumn 1 och sköt undan etiketten. Resultatet var en total
+   som läste tvärtemot varje annan rad på sidan och tvärtemot offertmallen. */
+.bk-total .t-lbl { grid-column: 1; grid-row: 1;
+  font-size: 12px; font-weight: 700; letter-spacing: .1em;
   text-transform: uppercase; color: var(--teal-ink); }
-.bk-total .t-amt { grid-row: 1 / span 2; align-self: center;
+.bk-total .t-vat { grid-column: 1; grid-row: 2;
+  font-size: 13px; font-weight: 500; color: var(--teal-ink); }
+.bk-total .t-amt { grid-column: 2; grid-row: 1 / span 2;
+  align-self: center; justify-self: end;
   font-size: clamp(24px, 3.4vw, 30px); font-weight: 700; letter-spacing: -.02em;
   color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.bk-total .t-vat { font-size: 13px; font-weight: 500; color: var(--teal-ink); }
 .bk-paynote { margin-top: 12px; font-size: 13px; font-weight: 400; color: var(--muted); line-height: 1.55; }
 
 /* ---------- ÄNDRA: omboka och avboka ---------- */

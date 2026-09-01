@@ -58,6 +58,22 @@ Bokning:  när + vem → vad → pris (som kvittens) → ändra (litet)
 
 Lägg `?gaps=1` på URL:en för att se författaranteckningarna.
 
+## Vald riktning: A · Kallelsen
+
+Ägaren valde A 2026-09-01. Den har därefter genomgått en mätbaserad UX- och
+designgenomgång som hittade nio fynd, alla åtgärdade. Se
+[UX-ANALYS.md, del 2](UX-ANALYS.md) för bevis och mätvärden.
+
+Det som tillkom i genomgången: sidan fick en `<h1>` (den hade ingen), en **adress**
+(saknades helt), en **tredje väg** att bara ställa en fråga i stället för att bara kunna
+omboka eller avboka, och ett **entydigt tidsfönster** — »08:00 till 12:00« kunde läsas
+både som ankomstfönster och som arbetstid, och skillnaden avgör om kunden kan gå till
+jobbet. Totalplattan hade dessutom beloppet till vänster och etiketten till höger,
+tvärtemot varje annan rad på sidan.
+
+B och C står kvar som de wireframes de var, för jämförelsens skull. Bara frågevägen är
+tillagd även där.
+
 ## Min rekommendation
 
 **A om ni vill ha en sida, B om ni vill lösa ett problem.**
