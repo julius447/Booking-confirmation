@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bokningsbekräftelsen · integrationstest</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="assets/tokens.css">
+  <link rel="stylesheet" href="assets/shared.css">
+  <style>
+    /* Testsida för utvecklaren: vänster datan, höger sidan som den renderas.
+       Sidan hämtas som text, får ett <script>window.AMPY_BOKNING = …</script>
+       före bokning.js och skrivs in i en iframe via srcdoc. Kräver http(s),
+       inte file://. */
+    .x-shell { max-width: 1400px; margin-inline: auto; padding: 0 clamp(14px, 3vw, 28px) 48px; }
+    .x-head { margin-top: 32px; }
+    .x-head h1 { font-size: clamp(22px, 3vw, 30px); font-weight: 600; letter-spacing: -.015em; color: var(--ink); }
+    .x-head p { margin-top: 8px; font-size: 15px; font-weight: 300; color: var(--body-ink); line-height: 1.55; max-width: 70ch; }
+    .x-grid { display: grid; grid-template-columns: minmax(300px, 440px) minmax(0, 1fr); gap: 24px; margin-top: 24px; align-items: start; }
+    @media (max-width: 900px) { .x-grid { grid-template-columns: 1fr; } }
+    .x-pane { background: rgba(255,255,255,.85); border: 1px solid var(--card-border); border-radius: var(--r-lg); padding: 20px; }
+    .x-pane h2 { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 12px; }
+    .x-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .x-row button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line-strong);
+      background: #fff; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); cursor: pointer; }
+    .x-row button[aria-pressed="true"] { border-color: var(--navy); background: var(--navy); color: #fff; }
+    .x-row label { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 500; color: var(--ink); }
+    textarea.x-json { width: 100%; min-height: 420px; padding: 12px; border: 1.5px solid var(--line-strong); border-radius: var(--r-md);
+      font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); background: #fff; resize: vertical; }
+    .x-run { margin-top: 12px; }
+    .x-run button { min-height: 44px; padding: 0 20px; border-radius: 999px; border: 0; background: var(--navy); color: #fff;
+      font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .x-log { margin-top: 12px; font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--body-ink); white-space: pre-wrap; min-height: 3em; }
+    .x-frame { width: 100%; height: 1600px; border: 1px solid var(--card-border); border-radius: var(--r-lg); background: #fff; }
+    .x-frame.is-mobile { width: 390px; max-width: 100%; }
+  </style>
+</head>
+<body>
+<div class="x-shell">
+  <div class="x-head">
+    <h1>Integrationstest: bokningsbekräftelsen</h1>
+    <p>Datan till vänster är <code>window.AMPY_BOKNING</code>, sidan till höger är <code>riktning-b-dagen/index.html</code>
+      renderad med den. Byt tillstånd, ta bort nycklar, skriv in HTML i fritext: sidan ska aldrig tolka den.
+      Sändknapparna når ingen server här (ingen <code>bokning.endpoint</code>), konsolen loggar payloaden.</p>
+  </div>
+
+  <div class="x-grid">
+    <div class="x-pane">
+      <h2>Tillstånd</h2>
+      <div class="x-row" id="x-status">
+        <button type="button" data-status="bekraftad" aria-pressed="true">bekraftad</button>
+        <button type="button" data-status="ombokning_begard" aria-pressed="false">ombokning_begard</button>
+        <button type="button" data-status="avbokning_begard" aria-pressed="false">avbokning_begard</button>
+        <button type="button" data-status="avbokad" aria-pressed="false">avbokad</button>
+      </div>
+      <h2>Varianter</h2>
+      <div class="x-row">
+        <label><input type="checkbox" id="x-imorgon"> datumet är imorgon</label>
+        <label><input type="checkbox" id="x-inga-tillagg"> inga tillägg</label>
+        <label><input type="checkbox" id="x-inget-material"> inget material</label>
+        <label><input type="checkbox" id="x-ingen-villkorstext"> ingen villkorstext</label>
+        <label><input type="checkbox" id="x-mobil"> 390 px</label>
+      </div>
+      <h2>window.AMPY_BOKNING</h2>
+      <textarea class="x-json" id="x-json" spellcheck="false"></textarea>
+      <div class="x-run"><button type="button" id="x-kor">Rendera</button></div>
+      <div class="x-log" id="x-log"></div>
+    </div>
+    <iframe class="x-frame" id="x-frame" title="Bokningsbekräftelsen med testdata"></iframe>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var imorgon = new Date(); imorgon.setDate(imorgon.getDate() + 1);
+  function iso(d) { var p = function (x) { return (x < 10 ? "0" : "") + x; }; return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()); }
+  function dagLang(d) {
+    var s = d.toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "long" });
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function exempel() {
+    var idag = document.getElementById("x-imorgon").checked;
+    var datum = idag ? imorgon : new Date(2026, 8, 24);
+    var status = document.querySelector('#x-status [aria-pressed="true"]').getAttribute("data-status");
+    var d = {
+      "bokning.status": status,
+      "bokning.referens": "#B-2026-0431",
+      "offert.referens": "#2026-0187",
+      "bokning.dag_lang": dagLang(datum),
+      "bokning.datum_iso": iso(datum),
+      "bokning.tid": "08:00",
+      "bokning.adress_rad1": "Exempelgatan 12",
+      "bokning.adress_rad2": "123 45 Exempelstad",
+      "elektriker.namn": "Förnamn Efternamn",
+      "elektriker.profilbild_url": "",
+      "bokning.arbetsbeskrivning": [
+        { "rubrik": "Demontering av din gamla elcentral" },
+        { "rubrik": "Installation av två modulkapslingar (2×13)" },
+        { "rubrik": "Två jordfelsbrytare", "beskrivning": "Huset delas upp på två jordfelsbrytare i stället för en. Vid ett jordfel blir aldrig hela huset strömlöst." },
+        { "rubrik": "Personskyddsautomat för kyl och frys", "beskrivning": "Egen säkring med inbyggt jordfelsskydd. Kyl och frys står kvar även vid jordfel i andra delar av anläggningen." },
+        { "rubrik": "Uppdaterat gruppschema <b>fet</b>" }
+      ],
+      "bokning.material": ["2 st modulkapsling 2×13", "2 st jordfelsbrytare", "1 st personskyddsautomat 10 A", "1 st huvudbrytare", "Dvärgbrytare 10 A", "Dvärgbrytare 16 A", "Installationsmaterial", "Invändiga kopplingar och kabel", "Uppmärkning"],
+      "bokning.grundbelopp_text": "11 900 kr",
+      "bokning.tillagg": [
+        { "namn": "Extra arbetstimme på plats", "belopp_text": "+ 850 kr" },
+        { "namn": "Jordfelsbrytare till garaget <script>alert(1)<\/script>", "belopp_text": "+ 1 450 kr" }
+      ],
+      "bokning.total_text": "14 200 kr",
+      "bokning.total_not": "inkl. moms, efter ROT-avdrag",
+      "bokare.villkorstext": "Vi behöver komma åt elcentralen och huvudbrytaren. Strömmen är av under delar av arbetet.",
+      "bokning.token": "exempel-token-byts-av-crm",
+      "bokning.endpoint": ""
+    };
+    if (document.getElementById("x-inga-tillagg").checked) { d["bokning.tillagg"] = []; d["bokning.total_text"] = "11 900 kr"; }
+    if (document.getElementById("x-inget-material").checked) d["bokning.material"] = [];
+    if (document.getElementById("x-ingen-villkorstext").checked) d["bokare.villkorstext"] = "";
+    return d;
+  }
+
+  var ta = document.getElementById("x-json"), log = document.getElementById("x-log"), frame = document.getElementById("x-frame");
+  function fyll() { ta.value = JSON.stringify(exempel(), null, 2); }
+
+  // Fritext får aldrig kunna avsluta script-elementet: samma escape som i produktion.
+  function serialisera(obj) {
+    return JSON.stringify(obj).replace(/</g, "\\u003c").replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
+  }
+
+  var kalla = null;
+  function rendera() {
+    var data;
+    try { data = JSON.parse(ta.value); } catch (e) { log.textContent = "Ogiltig JSON: " + e.message; return; }
+    var p = kalla ? Promise.resolve(kalla) : fetch("riktning-b-dagen/index.html").then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); });
+    p.then(function (html) {
+      kalla = html;
+      var doc = html.replace(/\.\.\/assets\//g, "assets/")
+        .replace('<script src="assets/bokning.js">', "<script>window.AMPY_BOKNING = " + serialisera(data) + ";<\/script>\n<script src=\"assets/bokning.js\">");
+      frame.classList.toggle("is-mobile", document.getElementById("x-mobil").checked);
+      frame.srcdoc = doc;
+      log.textContent = "Renderad " + new Date().toLocaleTimeString("sv-SE") + ". Öppna konsolen för varningar om saknade nycklar och för payloaden när du trycker på en sändknapp.";
+    }).catch(function (e) { log.textContent = "Kunde inte hämta sidan: " + e.message + ". Kör via http(s), inte file://."; });
+  }
+
+  document.querySelectorAll("#x-status button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      document.querySelectorAll("#x-status button").forEach(function (x) { x.setAttribute("aria-pressed", "false"); });
+      b.setAttribute("aria-pressed", "true"); fyll(); rendera();
+    });
+  });
+  ["x-imorgon", "x-inga-tillagg", "x-inget-material", "x-ingen-villkorstext"].forEach(function (id) {
+    document.getElementById(id).addEventListener("change", function () { fyll(); rendera(); });
+  });
+  document.getElementById("x-mobil").addEventListener("change", rendera);
+  document.getElementById("x-kor").addEventListener("click", rendera);
+  fyll(); rendera();
+})();
+</script>
+</body>
+</html>

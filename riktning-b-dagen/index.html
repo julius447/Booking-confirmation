@@ -6,98 +6,23 @@
   <title>Din bokning är klar · Ampy</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#f5f9ff">
+  <!-- Ingen favicon i prototypen; produktionsdomänen har sin egen. -->
+  <link rel="icon" href="data:,">
   <link rel="preload" href="../assets/fonts/Outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/tokens.css">
   <link rel="stylesheet" href="../assets/shared.css">
   <link rel="stylesheet" href="../assets/bokning.css">
-  <style>
-    /* RIKTNING B — »Dagen«
-       Besöket som en tidslinje: innan, på plats, efteråt. Elektrikern ligger
-       där hen hör hemma i berättelsen, inne i »På plats«. Beställningen fälls
-       ihop till en uppteckning man öppnar vid behov.
-       Formen är pedagogisk: den svarar på frågor kunden inte ställer högt. */
-    .b-card {
-      background: rgba(255,255,255,.85); border: 1px solid var(--card-border);
-      border-radius: var(--r-lg);
-      box-shadow: 0 18px 44px rgba(9,11,50,.09), inset 0 1px 0 rgba(255,255,255,.6);
-      padding: clamp(20px, 3vw, 32px) clamp(18px, 3.2vw, 34px);
-    }
-    /* 16, inte 18: 18 ligger inte på spacingskalan. */
-    .b-card > * + * { margin-top: 16px; }
-
-    /* CONTAINER 1: datumet, och under det två fakta med samma behandling.
-       Tiden och adressen är samma sorts uppgift — »när« och »var« — och får
-       därför samma ikonstorlek, samma ränna och samma typgrad. Att putsa den
-       ena ikonen ensam hade brutit paret. */
-    /* Datumet vilar mitt i sitt eget utrymme. Tidigare 4 px över och 42 px
-       under, alltså tio gånger mer luft nedåt: rubrikordet var klistrat på
-       datumet medan linjen låg och seglade. Nu 16 över, 24 under. Att den
-       undre är något större är avsiktligt — linjen är en sektionsgräns och
-       rubrikordet en etikett, så de ska inte väga lika. */
-    /* .b-card > * + * lägger 18 px margin-top på varje syskon, och .b-hero är
-       en flex-kolumn med eget gap: de två ADDERADES till 42 px. Gapet äger
-       avståndet här. */
-    .b-hero { display: flex; flex-direction: column; gap: 24px; }
-    .b-hero > * + * { margin-top: 0; }
-    .b-hero .bk-when { gap: 16px; }
-    /* INVARIANT: en avdelarlinje har 24 px på BÅDA sidor. Här ger .b-hero:s
-       gap de 24 ovanför linjen och padding-top de 24 under. Kort 2 bröt mot
-       invarianten och är rättat där. */
-    .b-facts { display: flex; flex-direction: column; gap: 16px;
-      padding-top: 24px; border-top: 1px solid var(--line); }
-
-    /* Elektrikern inleder container 2. Ingen ram och ingen platta: hen ska
-       läsa som en hälsning från en människa, inte som ännu ett faktakort. */
-    .b-lead { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px;
-      align-items: center; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
-    .b-lead .bk-who__photo { width: 64px; height: 64px; }
-    .b-lead .bk-who__photo svg { width: 32px; height: 32px; }
-    .b-lead__txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-    .b-lead__name { font-size: 20px; font-weight: 600; color: var(--ink);
-      line-height: 1.2; letter-spacing: -.01em; }
-    .b-lead__role { font-size: 14.5px; font-weight: 400; color: var(--ink-soft);
-      line-height: 1.45; text-wrap: pretty; }
-    @media (max-width: 420px) {
-      .b-lead { grid-template-columns: 56px minmax(0, 1fr); }
-      .b-lead .bk-who__photo { width: 56px; height: 56px; }
-      .b-lead .bk-who__photo svg { width: 28px; height: 28px; }
-      .b-lead__name { font-size: 18.5px; }
-    }
-
-    /* FYND: tidsfönstret bröts mitt i värdet, »...mellan 08:00 och« / »12:00«,
-       vid 320/360/390. Meningen får brytas, värdet får inte. */
-    .bk-when .w-time [data-oa] { white-space: nowrap; }
-
-    /* FYND: materiallistans spår var minmax(210px,1fr) i en 190 px behållare
-       vid 320, så raderna målades utanför kortet och hela sidan gick att dra
-       i sidled. min() slår bara till under 210 px; allt från 360 och uppåt
-       renderar identiskt. Scopat hit i stället för i shared.css, som delas
-       med offertmallen. */
-    .of-material ul { grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); }
-
-    /* Arbetsblocket. Tidslinjen och dess steg togs bort på ägarorder, och de
-       två snarlika rubrikerna slogs ihop till en: H2 »Det här gör vi hemma hos
-       dig«. Momenten är därmed tillbaka på h3, som shared.css redan stylar --
-       samma uppställning som offertmallen, inga dubbletter här.
-       Avståndsstegen: 24 rubrik -> innehåll, 16 moment -> moment,
-       4 momentrubrik -> dess beskrivning, 24 efter ett moment MED beskrivning
-       och från listan till materialblocket. */
-    .b-work > * + * { margin-top: 16px; }
-    /* .of-work bor i shared.css och delas med offertmallen: överskriv scopat. */
-    .b-work .of-work { gap: 16px; }
-    /* Ett moment MED beskrivning är två textnivåer högt. Med samma avstånd till
-       nästa moment stängdes paret aldrig och beskrivningen flöt mellan två
-       rubriker. 4 uppåt mot 24 nedåt binder den till sin egen rubrik. */
-    .b-work .of-work li:has(p) + li { margin-top: 8px; }
-    .b-work .of-material { margin-top: 24px; }
-    #arbetet-h { margin-top: 24px; }
-    #arbetet-h + .b-work { margin-top: 24px; }
-  </style>
 </head>
 <body>
-<div class="co-shell bk-shell">
+<!-- BOKNINGSBEKRÄFTELSEN
+     Allt som varierar per kund bär en data-oa-hook och fylls av window.AMPY_BOKNING
+     (assets/bokning.js, del 1). Värdena i markupen är exempel för prototypen.
+     Element med data-state-show / data-state-hide växlar med bokning.status.
+     Kontraktet i sin helhet: HANDOVER.md. -->
+<div class="bk-shell">
 
-  <header class="of-top co-top">
+  <header class="of-top">
     <img class="of-top__logo" src="../assets/ampy-logo-dark.png" alt="Ampy" width="1600" height="468">
     <div class="of-top__meta">
       <span class="of-pill">Bokning <span data-oa="bokning.referens">#B-2026-0431</span></span>
@@ -107,56 +32,60 @@
 
   <main class="bk-flow" id="innehall">
 
-    <!-- NÄR. Även i den berättande riktningen ligger datumet överst: kunden
-         öppnar sidan flera gånger och ska aldrig behöva scrolla efter det. -->
-    <!-- CONTAINER 1 bär nu tre fakta och inget annat: när, hur länge, var.
-         Elektrikern har flyttat till container 2 där hen inleder besöket.
-         <h1> med <time>: datumet är sidans rubrik, inte en span. -->
-    <section class="b-card b-hero" aria-labelledby="nar-h">
+    <!-- NÄR OCH VAR. Datumet är sidans rubrik: kunden öppnar sidan flera gånger
+         och ska aldrig behöva scrolla efter det. datetime är enda källan för det
+         maskinläsbara datumet (»Imorgon,« räknas därifrån). -->
+    <section class="bk-card bk-hero" aria-labelledby="nar-h">
       <div class="bk-when">
-        <span class="w-cap" id="nar-h">Vi kommer</span>
+        <span class="w-cap" id="nar-h">
+          <span data-state-show="bekraftad ombokning_begard">Vi kommer</span>
+          <span data-state-show="avbokning_begard" hidden>Avbokning mottagen</span>
+          <span data-state-show="avbokad" hidden>Avbokad</span>
+        </span>
         <h1 class="bk-when__day">
           <span class="w-rel" data-rel hidden></span>
-          <time data-oa="bokning.dag_lang" data-datum="2026-09-24" datetime="2026-09-24">Torsdag 24 september</time>
+          <time data-oa="bokning.dag_lang" datetime="2026-09-24">Torsdag 24 september</time>
         </h1>
+        <p class="bk-state" data-state-show="ombokning_begard avbokning_begard avbokad" hidden>
+          <span data-state-show="ombokning_begard" hidden>Du har föreslagit en ny tid. Den här tiden gäller tills vi har bekräftat något annat.</span>
+          <span data-state-show="avbokning_begard" hidden>Vi har tagit emot din avbokning.</span>
+          <span data-state-show="avbokad" hidden>Tiden är avbokad. Vill du boka en ny tid, ring oss på <a href="tel:+46102657979" class="nb">010-265 79 79</a>.</span>
+        </p>
       </div>
 
-      <!-- NÄR och VAR är ett faktapar: två uppgifter, samma behandling, samma
-           ikonstorlek. Klockslaget är ETT värde, inte ett spann — ägarorder. -->
-      <div class="b-facts">
-        <p class="bk-fact">
+      <div class="bk-facts">
+        <p class="bk-fact" data-state-hide="avbokning_begard avbokad">
           <span class="bk-fact__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12.4" r="8.4"/><path d="M12 7.6v5l3.2 2"/></svg></span>
           <span class="bk-fact__txt">Elektrikern kommer runt <b data-oa="bokning.tid">08:00</b></span>
         </p>
         <p class="bk-fact">
           <span class="bk-fact__ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21.2c0 0 6.6-5.6 6.6-10.5a6.6 6.6 0 1 0-13.2 0c0 4.9 6.6 10.5 6.6 10.5Z"/><circle cx="12" cy="10.6" r="2.5"/></svg></span>
-          <span class="bk-fact__txt" data-oa="bokning.adress_rad1">[Gatuadress]
-            <span data-oa="bokning.adress_rad2">[Postnummer och ort]</span>
+          <span class="bk-fact__txt">
+            <span data-oa="bokning.adress_rad1">[Gatuadress]</span>
+            <span class="bk-fact__sub" data-oa="bokning.adress_rad2">[Postnummer och ort]</span>
           </span>
         </p>
       </div>
     </section>
 
-    <!-- TIDSLINJEN: innan, på plats, efteråt -->
-    <section class="b-card" aria-labelledby="arbetet-h">
-      <!-- Elektrikern inleder besöket: hen är det första kunden vill veta om
-           container 2, före vad som ska göras. Telefonnumret är borttaget på
-           ägarorder; det står kvar i sidfoten. -->
-      <div class="b-lead">
+    <!-- VEM OCH VAD. Elektrikern inleder, sedan arbetsbeskrivningen. Båda
+         listorna byggs om ur bokning.arbetsbeskrivning och bokning.material;
+         raderna nedan är exempel, bocken i första raden är mallen som klonas. -->
+    <section class="bk-card" aria-labelledby="arbetet-h">
+      <div class="bk-lead" role="group" aria-label="Din elektriker">
         <span class="bk-who__photo">
-          <!-- [ELEKTRIKERBILD] profilbilden från CRM:et; silhuetten är platshållaren -->
           <svg data-oa-photo="elektriker.profilbild_url" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20.4c.6-3.9 3.6-6 7.2-6s6.6 2.1 7.2 6"/></svg>
         </span>
-        <span class="b-lead__txt">
-          <span class="b-lead__name" data-oa="elektriker.namn">[Elektriker]</span>
-          <span class="b-lead__role">Behörig elektriker som ansvarar för din installation</span>
+        <span class="bk-lead__txt">
+          <span class="bk-lead__name" data-oa="elektriker.namn">[Elektriker]</span>
+          <span class="bk-lead__role">Behörig elektriker som ansvarar för din installation</span>
         </span>
       </div>
 
       <h2 class="of-h2" id="arbetet-h">Det här gör vi hemma hos dig</h2>
 
-      <div class="b-work">
-        <ul class="of-work" data-oa-list="bokning.arbetsbeskrivning">
+      <div class="bk-work">
+        <ul class="of-work" role="list" data-oa-list="bokning.arbetsbeskrivning">
           <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
             <div><h3>Demontering av din gamla elcentral</h3></div></li>
           <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
@@ -173,7 +102,7 @@
             Material som ingår
             <svg class="m-arrow" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
           </summary>
-          <ul data-oa-list="bokning.material">
+          <ul role="list" data-oa-list="bokning.material">
             <li>2 st modulkapsling 2×13</li>
             <li>2 st jordfelsbrytare</li>
             <li>1 st personskyddsautomat 10 A</li>
@@ -188,27 +117,27 @@
       </div>
     </section>
 
-    <!-- BESTÄLLNINGEN: uppteckningen, hopfälld. Priset är en kvittens. -->
-    <section class="b-card" aria-labelledby="pris-h">
+    <!-- BESTÄLLNINGEN. Priset som kvittens, aldrig som betalkrav. Raden med
+         data-oa-tillagg är en mall: den klonas per post i bokning.tillagg och
+         tas bort så fort riktig data finns. -->
+    <section class="bk-card" aria-labelledby="pris-h">
       <h2 class="of-h2" id="pris-h">Så här ser din beställning ut</h2>
       <div class="bk-order__rows">
         <div class="bk-row">
           <span class="lbl">Komplett arbete</span>
           <span class="amt" data-oa="bokning.grundbelopp_text">11&nbsp;900&nbsp;kr</span>
         </div>
-        <!-- Raden såg exakt likadan ut som »Komplett arbete« och saknade krok,
-             så en kund UTAN tillägg fick både raden och en total som inte gick
-             ihop. [GAP] Hur renderas fler än ETT tillägg? bokning.js hanterar
-             bara tom mot icke-tom lista, inte n rader. -->
-        <div class="bk-row bk-row--add" data-oa-tillagg>
-          <span class="lbl"><span class="r-tag">Tillägg</span>Extra arbetstimme på plats</span>
-          <span class="amt">+&nbsp;850&nbsp;kr</span>
+        <div class="bk-row" data-oa-tillagg>
+          <span class="lbl"><span class="r-tag">Tillägg</span><span data-t="namn">Extra arbetstimme på plats</span></span>
+          <span class="amt" data-t="belopp_text">+&nbsp;850&nbsp;kr</span>
         </div>
       </div>
       <div class="bk-total">
-        <span class="t-lbl">Överenskommet pris</span>
+        <span class="t-txt">
+          <span class="t-lbl">Överenskommet pris</span>
+          <span class="t-vat" data-oa="bokning.total_not">inkl. moms, efter ROT-avdrag</span>
+        </span>
         <span class="t-amt" data-oa="bokning.total_text">12&nbsp;750&nbsp;kr</span>
-        <span class="t-vat">inkl. moms, efter ROT-avdrag</span>
       </div>
       <details class="of-legal">
         <summary>
@@ -216,22 +145,21 @@
           <svg class="m-arrow" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="l-body">
-          <p class="l-unique" data-oa="bokare.villkorstext">[Bokarens text om just det här uppdraget läggs in här.]</p>
-          <p><a class="of-terms-link" href="https://ampy.se/kopvillkor" target="_blank" rel="noopener">Läs våra allmänna köpvillkor</a></p>
+          <p class="l-unique" data-oa="bokare.villkorstext" data-oa-valfri>[Bokarens text om just det här uppdraget läggs in här.]</p>
+          <p><a class="of-terms-link" href="https://ampy.se/kopvillkor" target="_blank" rel="noopener">Läs våra allmänna köpvillkor<span class="sr-only"> (öppnas i ny flik)</span></a></p>
         </div>
       </details>
     </section>
 
-    <!-- ÄNDRA -->
-    <section class="b-card" aria-labelledby="andra-h">
+    <!-- ÄNDRA. Tre vägar: fråga, föreslå ny tid, avboka. Varje panel ligger
+         direkt efter sin knapp så att den öppnas där kunden tryckte; på bredare
+         skärmar lägger CSS knapparna på en rad och panelen under raden.
+         Anledningen är obligatorisk vid ny tid och avbokning (ägarkrav). -->
+    <section class="bk-card" aria-labelledby="andra-h">
       <h2 class="of-h2" id="andra-h">Behöver du höra av dig?</h2>
-      <p class="bk-change__intro">Fråga om något är oklart, till exempel om adressen inte stämmer. Behöver tiden flyttas, säg till så snart du vet, så hittar vi en ny.
-        <span class="of-gap of-gap--note">GAP: gäller detta även vid avbokning nära inpå?</span>
-      </p>
+      <p class="bk-change__intro" data-state-show="bekraftad ombokning_begard">Fråga om något är oklart, till exempel om adressen inte stämmer. Behöver tiden flyttas, säg till så snart du vet, så hittar vi en ny.</p>
+      <p class="bk-change__intro" data-state-show="avbokning_begard avbokad" hidden>Ändrade du dig? Ring oss på <a href="tel:+46102657979" class="nb">010-265 79 79</a>, så bokar vi en ny tid.</p>
 
-      <!-- Panelerna ligger INNE i knappraden, direkt efter sin egen knapp.
-           Tidigare låg alla tre efter alla knappar, så »Ställ en fråga« öppnade
-           en panel 142 px längre ned, under »Avboka«. -->
       <div class="bk-change__btns">
         <button class="of-btn-secondary" type="button" id="fraga-btn" aria-expanded="false" aria-controls="fraga-panel">Ställ en fråga</button>
         <div class="bk-panel" id="fraga-panel">
@@ -239,7 +167,7 @@
           <p class="p-hint">Stämmer inte adressen, eller undrar du över något inför besöket? Skriv här så svarar vi.</p>
           <div class="bk-field">
             <label for="b-fraga">Vad undrar du över?</label>
-            <textarea id="b-fraga" data-varfor placeholder="Till exempel: kan ni titta på uttaget i garaget samtidigt?"></textarea>
+            <textarea id="b-fraga" name="text" data-varfor required aria-required="true" placeholder="Till exempel: kan ni titta på uttaget i garaget samtidigt?"></textarea>
           </div>
           <button class="of-btn-send" type="button" data-skicka>
             <span>Skicka frågan</span>
@@ -247,6 +175,7 @@
           </button>
           <p class="bk-status" role="status" id="b-fraga-status"></p>
         </div>
+
         <button class="of-btn-secondary" type="button" id="omboka-btn" aria-expanded="false" aria-controls="omboka-panel">Föreslå en ny tid</button>
         <div class="bk-panel" id="omboka-panel">
           <h3>Föreslå en ny tid</h3>
@@ -254,11 +183,11 @@
           <div class="bk-two">
             <div class="bk-field">
               <label for="b-datum">Vilket datum skulle passa?</label>
-              <input type="date" id="b-datum" data-nytt-datum>
+              <input type="date" id="b-datum" name="nytt_datum" data-nytt-datum required aria-required="true">
             </div>
             <div class="bk-field">
               <label for="b-fonster">När på dagen?</label>
-              <select id="b-fonster" data-nytt-fonster>
+              <select id="b-fonster" name="fonster" data-nytt-fonster>
                 <option value="fm">Förmiddag</option>
                 <option value="em">Eftermiddag</option>
                 <option value="nar">Spelar ingen roll</option>
@@ -267,7 +196,7 @@
           </div>
           <div class="bk-field">
             <label for="b-varfor-om">Varför passar inte den bokade tiden?</label>
-            <textarea id="b-varfor-om" data-varfor placeholder="Till exempel: jag är bortrest den veckan"></textarea>
+            <textarea id="b-varfor-om" name="anledning" data-varfor required aria-required="true" placeholder="Till exempel: jag är bortrest den veckan"></textarea>
           </div>
           <button class="of-btn-send" type="button" data-skicka>
             <span>Skicka förslaget</span>
@@ -275,13 +204,14 @@
           </button>
           <p class="bk-status" role="status" id="b-omboka-status"></p>
         </div>
+
         <button class="of-btn-secondary" type="button" id="avboka-btn" aria-expanded="false" aria-controls="avboka-panel">Avboka</button>
         <div class="bk-panel" id="avboka-panel">
           <h3>Avboka</h3>
           <p class="p-hint">Vill du hellre flytta tiden än att avboka helt? Använd knappen ovanför.</p>
           <div class="bk-field">
             <label for="b-varfor-av">Varför avbokar du?</label>
-            <textarea id="b-varfor-av" data-varfor placeholder="Skriv kort vad som hände"></textarea>
+            <textarea id="b-varfor-av" name="anledning" data-varfor required aria-required="true" placeholder="Skriv kort vad som hände"></textarea>
           </div>
           <button class="of-btn-send" type="button" data-skicka>
             <span>Avboka tiden</span>
@@ -290,9 +220,6 @@
           <p class="bk-status" role="status" id="b-avboka-status"></p>
         </div>
       </div>
-
-
-
     </section>
   </main>
 
@@ -300,6 +227,9 @@
     Ampy Nordic AB · Org.nr 559254-9819 · <a href="tel:+46102657979" class="nb">010-265 79 79</a>
   </footer>
 </div>
+<!-- Produktion: <script>window.AMPY_BOKNING = {…}</script> sätts in här, före bokning.js.
+     Serialisera med JSON.stringify(...).replace(/</g, "\\u003c") så att fritext aldrig
+     kan avsluta script-elementet. -->
 <script src="../assets/bokning.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bokningsbekräftelsen · tre riktningar</title>
+  <title>Bokningsbekräftelsen · vald riktning</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preload" href="assets/fonts/Outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/tokens.css">
@@ -15,9 +15,16 @@
       line-height: 1.12; color: var(--ink); text-wrap: balance; }
     .v-head p { margin-top: 14px; font-size: 16.5px; font-weight: 300; color: var(--body-ink);
       line-height: 1.6; text-wrap: pretty; }
-    .v-head .v-more { margin-top: 18px; display: inline-flex; align-items: center; gap: 8px;
+    .v-head .v-more { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px;
       min-height: 44px; font-size: 15px; font-weight: 600; color: var(--teal-link);
       text-decoration: underline; text-underline-offset: 3px; }
+    .v-vald { margin-top: 24px; padding: 16px 20px; border-radius: var(--r-md);
+      background: var(--teal-soft); border: 1px solid rgba(0,169,145,.24);
+      font-size: 15px; font-weight: 500; color: var(--teal-ink); line-height: 1.5; }
+    .v-vald a { color: inherit; font-weight: 700; }
+    .v-card.is-arkiv { opacity: .72; }
+    .v-card.is-arkiv .of-btn-primary { background: transparent; color: var(--ink);
+      border: 1.5px solid var(--line-strong); box-shadow: none; }
 
     .v-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
       gap: 22px; margin-top: clamp(26px, 4vw, 44px); align-items: stretch; }
@@ -56,15 +63,17 @@
   </header>
 
   <div class="v-head">
-    <h1>Tre riktningar för bokningsbekräftelsen</h1>
-    <p>Samma innehåll, tre olika sätt att bygga sidan. De skiljer sig i struktur, inte i färgsättning.
-      Öppna dem i mobilen om du kan, det är där 58 procent av kunderna läser dem.</p>
-    <a class="v-more" href="UX-ANALYS.md">Läs UX-analysen först</a>
+    <h1>Bokningsbekräftelsen</h1>
+    <p>Tre riktningar togs fram för riktningsval. Riktning B valdes och har därefter
+      genomarbetats i flera omgångar; A och C står kvar som frysta utkast för jämförelsens skull.</p>
+    <p class="v-vald">Vald och levererad: <a href="riktning-b-dagen/">riktning B</a>.
+      Utvecklardokumentationen finns i <a href="HANDOVER.md">HANDOVER.md</a>.</p>
+    <a class="v-more" href="UX-ANALYS.md">Läs UX-analysen</a>
   </div>
 
   <div class="v-grid">
 
-    <article class="v-card">
+    <article class="v-card is-arkiv">
       <span class="v-card__letter" aria-hidden="true">A</span>
       <h2>Kallelsen</h2>
       <p class="v-card__tes">En centrerad kolumn. Datumet öppnar sidan i displaystorlek, som en biljett,
@@ -74,23 +83,23 @@
         <dt>Stark när</dt><dd>Kunden vill ha ett papper att spara.</dd>
         <dt>Svaghet</dt><dd>Uppteckningen blir en lång, likformig sträcka.</dd>
       </dl>
-      <a class="of-btn-primary" href="riktning-a-kallelsen/">Öppna riktning A</a>
+      <a class="of-btn-primary" href="riktning-a-kallelsen/">Öppna utkast A</a>
     </article>
 
     <article class="v-card">
       <span class="v-card__letter" aria-hidden="true">B</span>
       <h2>Dagen</h2>
-      <p class="v-card__tes">Besöket som en tidslinje: innan, på plats, efteråt. Elektrikern ligger
-        där hen hör hemma i berättelsen. Beställningen är en uppteckning man öppnar vid behov.</p>
+      <p class="v-card__tes">Datumet överst, elektrikern som inleder arbetsbeskrivningen, beställningen
+        som kvittens och tre vägar att höra av sig: fråga, föreslå ny tid, avboka.</p>
       <dl>
-        <dt>Karaktär</dt><dd>Pedagogisk. Svarar på frågor kunden inte ställer högt.</dd>
+        <dt>Status</dt><dd>Vald. Genomarbetad i flera omgångar och granskad inför utveckling.</dd>
         <dt>Stark när</dt><dd>Kunden aldrig haft en elektriker hemma förut.</dd>
-        <dt>Svaghet</dt><dd>Kräver att ni fyller i förberedelserna, annars blir tidslinjen en tom form.</dd>
+        <dt>Leverans</dt><dd>riktning-b-dagen/ + assets/bokning.css + assets/bokning.js, se HANDOVER.md.</dd>
       </dl>
-      <a class="of-btn-primary" href="riktning-b-dagen/">Öppna riktning B</a>
+      <a class="of-btn-primary" href="riktning-b-dagen/">Öppna den valda sidan</a>
     </article>
 
-    <article class="v-card">
+    <article class="v-card is-arkiv">
       <span class="v-card__letter" aria-hidden="true">C</span>
       <h2>Kvittensen</h2>
       <p class="v-card__tes">Ett rutnät av fristående kort: tid, elektriker, arbete, pris, villkor, ändra.
@@ -100,12 +109,12 @@
         <dt>Stark när</dt><dd>Kunden öppnar sidan för femte gången och vill se en enda sak.</dd>
         <dt>Svaghet</dt><dd>Minst varm, och återinför en tvåkolumnskänsla på desktop.</dd>
       </dl>
-      <a class="of-btn-primary" href="riktning-c-kvittensen/">Öppna riktning C</a>
+      <a class="of-btn-primary" href="riktning-c-kvittensen/">Öppna utkast C</a>
     </article>
   </div>
 
   <section class="v-fragor" aria-labelledby="fragor-h">
-    <h2 id="fragor-h">Så bedömer du dem</h2>
+    <h2 id="fragor-h">Så bedömdes de</h2>
     <ol>
       <li>Får jag veta <b>när</b> och <b>vem</b> utan att scrolla?</li>
       <li>Om jag öppnar sidan för femte gången, hur snabbt hittar jag det jag kom för?</li>

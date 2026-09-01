@@ -1,153 +1,172 @@
 /* =========================================================================
-   BOKNINGSBEKRÄFTELSEN — komponenter ovanpå shared.css
-   Alla tre riktningarna delar den här filen. Riktningsspecifik layout ligger
-   i respektive sidas <style>. Inga nya färger: allt hämtas ur samma tokens
-   som offertmallen.
+   BOKNINGSBEKRÄFTELSEN — komponenterna ovanpå shared.css.
+   Läses in efter tokens.css och shared.css. Inga nya färger: allt hämtas ur
+   samma tokens som offertmallen.
+
+   Ur shared.css används: .of-top, .of-top__logo, .of-top__meta, .of-top__valid,
+   .of-pill, .of-h2, .of-work, .w-check, .of-material, .m-arrow, .of-legal,
+   .l-body, .l-unique, .of-terms-link, .of-btn-secondary, .of-btn-send,
+   .of-foot, .nb, .sr-only, @keyframes of-fade, --ease, :focus-visible,
+   prefers-reduced-motion och print-blocket. Allt annat står här.
+
+   Avstånd ligger på skalan 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64. Två brytpunkter:
+   480 (telefon) och 680 (knappraden går på en rad). Tre regler bär rytmen:
+     - syskon i ett kort: 16
+     - rubrik -> sitt innehåll: 24
+     - en avdelarlinje har 24 på båda sidor
    ========================================================================= */
 
 .bk-shell { max-width: 780px; margin-inline: auto; padding: 0 clamp(14px, 4vw, 28px) 64px; }
-/* 48 och 32, inte 40 och 28: sektionsavståndet ska ligga på skalan
-   8/12/16/24/32/48 och vara tydligt större än det största avståndet INUTI ett
-   kort (16), annars läser sektionerna ihop till ett enda block. */
-.bk-flow  { display: flex; flex-direction: column; gap: 48px; margin-top: 48px; }
-@media (max-width: 560px) { .bk-flow { gap: 32px; margin-top: 32px; } }
+/* Samma varningsfärg som shared.css använder (5,5:1 mot vitt). */
+.bk-shell { --bk-warn: #8a6116; }
+/* Tillstånden växlas med hidden-attributet; ingen komponentregel får slå det. */
+.bk-shell [hidden] { display: none !important; }
 
-/* ---------- bekräftelseremsan ---------- */
-.bk-band {
-  display: flex; align-items: center; gap: 10px;
-  margin-top: clamp(14px, 3vw, 22px); padding: 12px 18px;
-  border-radius: 999px; width: fit-content; max-width: 100%;
-  background: var(--teal-soft); border: 1px solid rgba(0,169,145,.24);
-  font-size: 14px; font-weight: 600; color: var(--teal-ink); line-height: 1.4;
+.bk-flow { display: flex; flex-direction: column; gap: 48px; margin-top: 48px; }
+@media (max-width: 480px) { .bk-flow { gap: 32px; margin-top: 32px; } }
+
+/* ---------- huvudet (shared.css .of-top) ----------
+   Samma vågräta inset som korten, så logotyp och referenser linjerar med
+   kortens innehållskant. Under 480 bryts referensraden: »Bokning #B-2026-0431«
+   + »Offert #2026-0187« på en rad (nowrap i shared.css) mätte 23 px utanför
+   sin ruta vid 360. */
+.bk-shell .of-top { padding-inline: clamp(16px, 3.2vw, 32px); }
+@media (max-width: 480px) {
+  .bk-shell .of-top__meta { flex-wrap: wrap; justify-content: flex-end; row-gap: 4px; }
 }
-.bk-band svg { flex: none; width: 18px; height: 18px; fill: none; stroke: var(--teal-ink);
-  stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- kortet ---------- */
+.bk-card {
+  background: rgba(255,255,255,.85); border: 1px solid var(--card-border);
+  border-radius: var(--r-lg);
+  box-shadow: 0 18px 44px rgba(9,11,50,.09), inset 0 1px 0 rgba(255,255,255,.6);
+  padding: clamp(24px, 3vw, 32px) clamp(16px, 3.2vw, 32px);
+}
+.bk-card > * + * { margin-top: 16px; }
+/* Rubrik -> innehåll: 24. .of-h2 bär 16 i margin-bottom; marginalerna faller
+   ihop i blocklayout, så 24 här ger 24 totalt. */
+.bk-card > .of-h2 + * { margin-top: 24px; }
 
 /* ---------- NÄR: datumet som sidans ankare ---------- */
-.bk-when { display: flex; flex-direction: column; gap: 6px; }
+.bk-hero { display: flex; flex-direction: column; gap: 24px; }
+.bk-hero > * + * { margin-top: 0; }
+.bk-when { display: flex; flex-direction: column; gap: 16px; }
 .bk-when .w-cap {
   font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
   color: var(--faint);
 }
-h1.bk-when__day, .bk-when .w-day {
+h1.bk-when__day {
   font-size: clamp(30px, 5.5vw, 46px); font-weight: 600; letter-spacing: -.025em;
   line-height: 1.05; color: var(--ink); text-wrap: balance;
 }
-/* »Imorgon« framför datumet. Sidan öppnas flera gånger, och relativ tid är
-   det som gör den levande i stället för statisk. Sätts av bokning.js. */
+/* »Imorgon,« på egen rad framför datumet. Sätts av bokning.js. */
 .bk-when .w-rel { display: block; color: var(--teal-ink); }
-.bk-when .w-time {
-  font-size: clamp(17px, 2.2vw, 20px); font-weight: 500; color: var(--teal-ink);
-  font-variant-numeric: tabular-nums;
-}
-.bk-when .w-note { font-size: 13.5px; font-weight: 300; color: var(--muted); line-height: 1.5; }
+/* Statusraden: syns bara när bokning.status inte är bekraftad. */
+.bk-state { font-size: 15px; font-weight: 500; color: var(--body-ink); line-height: 1.5;
+  max-width: 58ch; text-wrap: pretty; }
+.bk-state a { color: var(--teal-link); font-weight: 600; }
 
-.bk-cal {
-  align-self: flex-start; margin-top: 10px;
-  display: inline-flex; align-items: center; gap: 9px; min-height: 44px;
-  padding: 0 18px; border-radius: 999px;
-  border: 1.5px solid var(--line-strong); background: rgba(255,255,255,.7);
-  font-size: 14.5px; font-weight: 600; color: var(--ink); cursor: pointer;
-  transition: border-color .15s var(--ease), background .15s var(--ease);
-}
-.bk-cal:hover { border-color: var(--navy); background: #fff; }
-.bk-cal svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2;
-  stroke-linecap: round; stroke-linejoin: round; }
-
-/* ---------- FAKTAPARET: när och var ----------
-   Två uppgifter av samma slag, alltså samma behandling. Ikonen är 34 px, upp
-   från 26, och glyfen 18 px: i det tidigare måttet var pinnen mindre än
-   bocken i arbetslistan trots att den bär en viktigare uppgift.
-   Brickan är rundad kvadrat, samma form som serviceavtalets ikoner i
-   offertmallen, så ikonspråket är ett och samma över hela flödet. */
-.bk-fact { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 14px; align-items: start; }
+/* ---------- faktaparet: när och var ----------
+   Två uppgifter av samma slag, alltså samma behandling: 34 px bricka, 18 px
+   glyf, rundad kvadrat som serviceavtalets ikoner i offertmallen. */
+.bk-facts { display: flex; flex-direction: column; gap: 16px;
+  padding-top: 24px; border-top: 1px solid var(--line); }
+.bk-fact { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 16px; align-items: start; }
 .bk-fact__ico {
   width: 34px; height: 34px; border-radius: var(--r-md); display: grid; place-items: center;
-  background: var(--teal-soft); border: 1px solid rgba(0,169,145,.24); margin-top: 1px;
+  background: var(--teal-soft); border: 1px solid rgba(0,169,145,.24); margin-top: 1px; /* optisk */
 }
 .bk-fact__ico svg { width: 18px; height: 18px; fill: none; stroke: var(--teal-ink);
   stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+/* Första textraden centreras mot brickan: (brickans höjd - radhöjden) / 2. */
 .bk-fact__txt { font-size: 16px; font-weight: 500; color: var(--ink); line-height: 1.45;
-  padding-top: 5px; text-wrap: pretty; }
+  padding-top: calc((34px - 1.45em) / 2); text-wrap: pretty; }
 .bk-fact__txt b { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.bk-fact__txt span { display: block; font-weight: 400; color: var(--ink-soft); }
+.bk-fact__sub { display: block; font-weight: 400; color: var(--ink-soft); }
 
-/* ---------- VAR: adressen (används av riktning A) ---------- */
-.bk-where { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; align-items: start; }
-.bk-where__ico { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--teal-soft); margin-top: 1px; }
-.bk-where__ico svg { width: 14px; height: 14px; fill: none; stroke: var(--teal-ink);
-  stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.bk-where__adr { font-size: 15.5px; font-weight: 500; color: var(--ink); line-height: 1.45; }
-.bk-where__adr span { display: block; font-weight: 400; color: var(--ink-soft); }
-.bk-where__fel { display: inline-block; margin-top: 6px; font-size: 13.5px; color: var(--muted); }
-
-/* ---------- VEM: elektrikern ---------- */
-.bk-who { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 18px; align-items: center; }
+/* ---------- VEM: elektrikern inleder kort 2 ----------
+   Ingen ram och ingen platta: hen ska läsa som en hälsning från en människa,
+   inte som ännu ett faktakort. Linjen under får 24 på båda sidor. */
+.bk-lead { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px;
+  align-items: center; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.bk-lead + .of-h2 { margin-top: 24px; }
 .bk-who__photo {
-  width: 72px; height: 72px; border-radius: 50%; position: relative;
+  width: 64px; height: 64px; border-radius: 50%; position: relative;
   display: grid; place-items: center; flex: none;
   background: linear-gradient(150deg, var(--navy), #1b2050);
   box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px rgba(0,169,145,.35);
 }
 .bk-who__photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
-.bk-who__photo svg { width: 36px; height: 36px; fill: none; stroke: rgba(255,255,255,.92);
+.bk-who__photo svg { width: 32px; height: 32px; fill: none; stroke: rgba(255,255,255,.92);
   stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.bk-who__name { font-size: 17.5px; font-weight: 600; color: var(--ink); line-height: 1.25; }
-.bk-who__role { display: block; margin-top: 2px; font-size: 13.5px; font-weight: 400; color: var(--ink-soft); }
-.bk-who__tel {
-  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 4px;
-  font-size: 15px; font-weight: 600; color: var(--teal-link);
-  text-decoration: underline; text-underline-offset: 3px; font-variant-numeric: tabular-nums;
+.bk-lead__txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.bk-lead__name { font-size: 20px; font-weight: 600; color: var(--ink); line-height: 1.2; letter-spacing: -.01em; }
+.bk-lead__role { font-size: 14.5px; font-weight: 400; color: var(--ink-soft); line-height: 1.45; text-wrap: pretty; }
+@media (max-width: 480px) {
+  .bk-lead { grid-template-columns: 56px minmax(0, 1fr); }
+  .bk-who__photo { width: 56px; height: 56px; }
+  .bk-who__photo svg { width: 28px; height: 28px; }
+  .bk-lead__name { font-size: 18.5px; }
 }
-.bk-who__tel svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2;
-  stroke-linecap: round; stroke-linejoin: round; }
-@media (max-width: 420px) { .bk-who { grid-template-columns: 60px minmax(0, 1fr); gap: 14px; }
-  .bk-who__photo { width: 60px; height: 60px; } .bk-who__photo svg { width: 30px; height: 30px; } }
+
+/* ---------- VAD: arbetsblocket ----------
+   .of-work bor i shared.css och delas med offertmallen: överskriv scopat.
+     16   moment -> moment
+      4   momentrubrik -> dess beskrivning (shared.css)
+     24   efter ett moment MED beskrivning, annars flöt beskrivningen mellan
+          två rubriker; och från listan till materialblocket */
+.bk-work > * + * { margin-top: 16px; }
+.bk-work .of-work { gap: 16px; }
+.bk-work .of-work li:has(p) + li { margin-top: 8px; }
+.bk-work .of-material { margin-top: 24px; }
+/* Materiallistans spår är minmax(210px, 1fr) i shared.css; min() hindrar att
+   ett spår blir bredare än behållaren om kortet någon gång är smalare än 210. */
+.of-material ul { grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); }
+/* CRM-text kan innehålla ord längre än spalten (»Jordfelsbrytarinstallationen«
+   är 250 px vid 320). Spalten får aldrig växa förbi kortet, så ett sådant ord
+   bryts. Ingen hyphens: auto: den avstavade »and-ra« mitt i en vanlig mening. */
+.bk-work .of-work li { grid-template-columns: 26px minmax(0, 1fr); }
+.bk-work .of-work h3, .bk-work .of-work p, .of-material li, .bk-fact__txt, .bk-lead__name, .bk-row .lbl {
+  overflow-wrap: anywhere;
+}
 
 /* ---------- BESTÄLLNINGEN: priset som kvittens, aldrig som betalkrav ---------- */
 .bk-order__rows { display: flex; flex-direction: column; }
 .bk-row {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 14px;
-  align-items: baseline; padding: 13px 0; border-bottom: 1px dashed var(--line);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px;
+  align-items: baseline; padding: 12px 0; border-bottom: 1px dashed var(--line);
 }
 .bk-row .lbl { font-size: 15px; font-weight: 400; color: var(--body-ink); }
 .bk-row .amt { font-size: 15px; font-weight: 600; color: var(--ink);
   font-variant-numeric: tabular-nums; white-space: nowrap; }
-/* Etiketten är riktig text i markupen, inte ett ::before. Som pseudo-element
-   syntes den varken för skärmläsaren eller vid kopiering. */
-.bk-row .r-tag {
-  display: block; font-size: 11px; font-weight: 700;
-  letter-spacing: .1em; text-transform: uppercase; color: var(--teal-ink); margin-bottom: 2px;
-}
+/* Etiketten är riktig text, inte ett ::before: ett pseudo-element syns varken
+   för skärmläsaren eller vid kopiering. */
+.bk-row .r-tag { display: block; font-size: 11px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--teal-ink); margin-bottom: 4px; }
+/* Totalen. Flex med radbrytning i stället för ett tvåkolumnsrutnät: ryms inte
+   etiketten och beloppet bredvid varandra flyttar beloppet ned på egen rad,
+   högerställt. Uppmätt: rutnätet sprack vid 320-375 (»ÖVERENSKOMMET PRIS« ur
+   sin cell, plattan 111 px hög). Ingen brytpunkt behövs. */
 .bk-total {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px;
-  align-items: baseline; margin-top: 16px; padding: 16px 18px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 8px 16px; margin-top: 16px; padding: 16px;
   border-radius: var(--r-md); background: var(--teal-soft);
 }
-/* Explicit placering. Utan den hamnade beloppet i kolumn 1 och etiketten i
-   kolumn 2: .t-amt deklarerar en egen rad, och autoplaceringen tog då första
-   lediga cell i kolumn 1 och sköt undan etiketten. Resultatet var en total
-   som läste tvärtemot varje annan rad på sidan och tvärtemot offertmallen. */
-.bk-total .t-lbl { grid-column: 1; grid-row: 1;
-  font-size: 12px; font-weight: 700; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--teal-ink); }
-.bk-total .t-vat { grid-column: 1; grid-row: 2;
-  font-size: 13px; font-weight: 500; color: var(--teal-ink); }
-.bk-total .t-amt { grid-column: 2; grid-row: 1 / span 2;
-  align-self: center; justify-self: end;
-  font-size: clamp(24px, 3.4vw, 30px); font-weight: 700; letter-spacing: -.02em;
-  color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.bk-paynote { margin-top: 12px; font-size: 13px; font-weight: 400; color: var(--muted); line-height: 1.55; }
+.bk-total .t-txt { display: flex; flex-direction: column; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.bk-total .t-lbl { font-size: 12px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--teal-ink); white-space: nowrap; }
+.bk-total .t-vat { font-size: 13px; font-weight: 500; color: var(--teal-ink); }
+.bk-total .t-amt { margin-left: auto; font-size: clamp(24px, 3.4vw, 30px); font-weight: 700;
+  letter-spacing: -.02em; color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-/* ---------- ÄNDRA: omboka och avboka ---------- */
+/* ---------- ÄNDRA: fråga, föreslå ny tid, avboka ---------- */
 .bk-change__intro { font-size: 14.5px; font-weight: 300; color: var(--body-ink); line-height: 1.6; max-width: 58ch; }
-/* Grid, inte flex-wrap. Med flex: 1 1 220px hamnade tredje knappen ensam på
-   egen rad i DUBBEL bredd på varje viewport över ca 460 px, så »Avboka« blev
-   sidans mest framträdande kontroll. Panelerna ligger nu inne i samma behållare
-   och spänner hela bredden på desktop, direkt under sin egen knapp på mobil. */
-.bk-change__btns { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 16px; }
-.bk-change__btns .bk-panel { margin-top: 0; }
+.bk-change__intro a { color: var(--teal-link); font-weight: 600; }
+/* Rutnät, inte flex-wrap: med flex: 1 1 220px hamnade tredje knappen ensam på
+   egen rad i dubbel bredd, så »Avboka« blev sidans mest framträdande kontroll.
+   Panelerna ligger i samma behållare, direkt efter sin knapp på mobil och
+   under hela raden på desktop. */
+.bk-change__btns { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
 @media (min-width: 680px) {
   .bk-change__btns { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .bk-change__btns .of-btn-secondary { order: 1; }
@@ -157,39 +176,43 @@ h1.bk-when__day, .bk-when .w-day {
   border-color: var(--navy); background: #fff;
   box-shadow: 0 4px 14px -6px rgba(9,11,50,.35);
 }
-.bk-panel { display: none; margin-top: 18px; padding: 18px; border-radius: var(--r-md);
+/* En låst väg (efter avbokning, eller ett skickat förslag) ser låst ut. */
+.bk-change__btns .of-btn-secondary:disabled { opacity: .45; cursor: default; box-shadow: none; }
+.bk-change__btns .of-btn-secondary:disabled:hover { border-color: var(--line-strong); background: rgba(255,255,255,.7); }
+
+.bk-panel { display: none; padding: 16px; border-radius: var(--r-md);
   background: rgba(255,255,255,.8); border: 1px solid var(--line-strong); }
 .bk-panel.visible { display: block; animation: of-fade .22s var(--ease) both; }
 .bk-panel h3 { font-size: 16.5px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
 .bk-panel .p-hint { font-size: 13.5px; font-weight: 300; color: var(--muted); line-height: 1.55; }
-.bk-field { margin-top: 14px; }
-.bk-field > label { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.bk-panel .of-btn-send { margin-top: 16px; }
+.bk-field { margin-top: 16px; }
+.bk-field > * { min-width: 0; }
+.bk-field > label { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+/* 16 px text i kontrollerna: under 16 zoomar iOS Safari in sidan vid fokus.
+   48 px höjd på alla tre, så datumfältet och selecten står lika höga. */
 .bk-field input[type="date"], .bk-field select, .bk-field textarea {
-  width: 100%; padding: 11px 13px; border: 1.5px solid var(--line-strong);
-  border-radius: var(--r-sm, 12px); background: #fff; font: inherit; font-size: 15px;
-  color: var(--ink); min-height: 46px;
+  width: 100%; padding: 12px; border: 1.5px solid var(--line-strong);
+  border-radius: var(--r-md); background: #fff; font: inherit; font-size: 16px;
+  color: var(--ink); min-height: 48px;
 }
-.bk-field textarea { min-height: 88px; resize: vertical; line-height: 1.5; }
+.bk-field input[type="date"], .bk-field select { height: 48px; padding-block: 0; }
+.bk-field textarea { min-height: 96px; resize: vertical; line-height: 1.5; }
+.bk-field ::placeholder { color: var(--faint); opacity: 1; }
+.bk-field [aria-invalid="true"] { border-color: var(--bk-warn); }
+.bk-panel.is-done :is(input, select, textarea) { background: rgba(11,16,48,.03); color: var(--muted); }
 .bk-field input:focus-visible, .bk-field select:focus-visible, .bk-field textarea:focus-visible {
   outline: 3px solid var(--navy); outline-offset: 2px; border-color: var(--navy);
 }
-.bk-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-@media (max-width: 460px) { .bk-two { grid-template-columns: 1fr; } }
-.bk-status { margin-top: 12px; font-size: 13.5px; font-weight: 500; line-height: 1.55; min-height: 21px; }
-.bk-status.is-block { color: #8a6116; }
+.bk-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+@media (max-width: 480px) { .bk-two { grid-template-columns: 1fr; } }
+.bk-status { margin-top: 12px; font-size: 13.5px; font-weight: 500; line-height: 1.55; min-height: 1.55em; }
+.bk-status.is-block { color: var(--bk-warn); }
 .bk-status.is-ok { color: var(--teal-link); }
 
-/* ---------- förberedelser ---------- */
-.bk-prep { list-style: none; display: flex; flex-direction: column; gap: 14px; }
-.bk-prep li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 12px; align-items: start; }
-/* Bock, inte siffra. De tre punkterna är parallella fakta, inte en ordnad
-   sekvens, och en numrering skulle påstå en ordning som inte finns. Samma
-   bockidiom som .w-check i arbetslistan. */
-.bk-prep .p-mark {
-  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--teal-soft); flex: none;
+/* ---------- utskrift ---------- */
+@media print {
+  .bk-change__btns, .bk-panel, .of-btn-send { display: none !important; }
+  .bk-card { box-shadow: none; background: #fff; break-inside: avoid; }
+  .bk-shell { padding-bottom: 0; }
 }
-.bk-prep .p-mark svg { width: 13px; height: 13px; fill: none; stroke: var(--teal-ink);
-  stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-.bk-prep .p-txt { font-size: 15px; font-weight: 400; color: var(--body-ink); line-height: 1.5; padding-top: 2px; }
-.bk-prep .p-txt b { font-weight: 600; color: var(--ink); }

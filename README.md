@@ -1,112 +1,68 @@
-# Bokningsbekräftelsen — tre riktningar
+# Bokningsbekräftelsen
 
-Mallen kunden får när tiden är bokad och offerten accepterad.
-Bygger på samma designsystem som [offertmallen](https://github.com/Ampy-nordic/offert-mall).
+Sidan kunden får när offerten är accepterad och tiden är bokad. Syskon till
+[offertmallen](https://github.com/Ampy-nordic/offert-mall): samma tokens, samma `shared.css`,
+samma datakontrakt.
 
-**→ [Öppna jämförelsesidan](https://julius447.github.io/Booking-confirmation/)**
-**→ [Läs UX-analysen](UX-ANALYS.md)** (läs den först, den förklarar varför riktningarna
-skiljer sig i struktur och inte bara i utseende)
+**Leverans: riktning B.** Utvecklardokumentationen på engelska finns i [HANDOVER.md](HANDOVER.md).
 
-| | Riktning | Karaktär | Öppna |
-|---|---|---|---|
-| **A** | Kallelsen | Dokument. Datumet i displaystorlek, en centrerad kolumn. | [Visa](https://julius447.github.io/Booking-confirmation/riktning-a-kallelsen/) |
-| **B** | Dagen | Pedagogisk. Besöket som en tidslinje: innan, på plats, efteråt. | [Visa](https://julius447.github.io/Booking-confirmation/riktning-b-dagen/) |
-| **C** | Kvittensen | Modulär. Ett rutnät av kort, snabbast att skanna. | [Visa](https://julius447.github.io/Booking-confirmation/riktning-c-kvittensen/) |
-
----
+| | Öppna |
+|---|---|
+| **Den valda sidan** | https://julius447.github.io/Booking-confirmation/riktning-b-dagen/ |
+| Integrationstest (byt tillstånd, mata in data) | https://julius447.github.io/Booking-confirmation/exempel-integration.html |
+| Jämförelsesidan med de frysta utkasten A och C | https://julius447.github.io/Booking-confirmation/ |
+| Analysen bakom riktningarna | [UX-ANALYS.md](UX-ANALYS.md) |
 
 ## Den bärande insikten
 
-Offerten och bokningsbekräftelsen ser ut att vara syskon men gör motsatt jobb. Offerten
-möter en kund som ska **bestämma sig**; bokningsbekräftelsen möter en kund som **redan
-har gjort det**. Därför är det rätt att ta bort summeringspanelen: den fanns för att hålla
-beslutet nåbart, och här finns inget beslut.
-
-Det som tar panelens plats som ankare är **tid och elektriker**, inte priset. Kunden öppnar
-sidan flera gånger — när den kommer, dagen innan, på morgonen — och ska aldrig behöva
-scrolla efter svaret. Uppmätt vid 390 px står både datum och elektriker inom de översta
-700 px i alla tre riktningarna.
-
-Prishierarkin inverteras därmed:
+Offerten och bokningsbekräftelsen ser ut att vara syskon men gör motsatt jobb. Offerten möter en
+kund som ska **bestämma sig**; bokningsbekräftelsen möter en kund som **redan har gjort det**.
+Därför finns ingen summeringspanel och inget prisankare: det som tar deras plats är **tid och
+elektriker**. Priset står med som kvittens, aldrig som betalkrav. Ingen merförsäljning.
 
 ```
 Offert:   pris → arbete → trygghet → beslut
-Bokning:  när + vem → vad → pris (som kvittens) → ändra (litet)
+Bokning:  när + vem → vad → pris (som kvittens) → höra av sig
 ```
 
-## Vad alla tre delar
+## Vad sidan gör
 
-- **Priset är formulerat som en kvittens, inte som ett betalkrav.** Offertens
-  "ATT BETALA" följer inte med hit; arbetet är inte utfört och ingen ska betala något.
-  Rubriken är "Överenskommet pris", med raden *"Ingenting ska betalas nu."*
-- **Anledningen är obligatorisk** vid både omboka och avboka, enligt ägarkravet. Spärren
-  säger vad som saknas och flyttar fokus dit. Ingen confirmshaming.
-- **Omboka föreslår en ny tid** med datum, tidsfönster och en fritextrad, och säger tydligt
-  att den nuvarande tiden står kvar tills vi bekräftat. Sidan låtsas inte boka om något.
-- **Lägg till i kalendern** bygger .ics-filen i webbläsaren ur det som står på sidan, så
-  kalendern aldrig kan säga en annan tid än sidan gör.
-- **Ingen merförsäljning.** Inget serviceavtal, inga tillägg att lägga till. Kunden har
-  köpt; sidans jobb är att vara pålitlig.
-- Samma tokens, samma Outfit, samma komponentspråk som offertmallen.
-
-## Två luckor som är markerade, inte ifyllda
-
-- **Hur länge strömmen är av** under arbetet. Det är precis den pedagogik som minskar
-  bomkörningar, men jag kan inte hitta på siffran. `[GAP]`
-- **Vad en sen avbokning kostar.** Framkörning och minimidebitering är en öppen grind sedan
-  tidigare. Sidan varken hittar på en avgift eller döljer att det kan finnas en. `[GAP]`
-
-Lägg `?gaps=1` på URL:en för att se författaranteckningarna.
-
-## Vald riktning: A · Kallelsen
-
-Ägaren valde A 2026-09-01. Den har därefter genomgått en mätbaserad UX- och
-designgenomgång som hittade nio fynd, alla åtgärdade. Se
-[UX-ANALYS.md, del 2](UX-ANALYS.md) för bevis och mätvärden.
-
-Det som tillkom i genomgången: sidan fick en `<h1>` (den hade ingen), en **adress**
-(saknades helt), en **tredje väg** att bara ställa en fråga i stället för att bara kunna
-omboka eller avboka, och ett **entydigt tidsfönster** — »08:00 till 12:00« kunde läsas
-både som ankomstfönster och som arbetstid, och skillnaden avgör om kunden kan gå till
-jobbet. Totalplattan hade dessutom beloppet till vänster och etiketten till höger,
-tvärtemot varje annan rad på sidan.
-
-B och C står kvar som de wireframes de var, för jämförelsens skull. Bara frågevägen är
-tillagd även där.
-
-## Min rekommendation
-
-**A om ni vill ha en sida, B om ni vill lösa ett problem.**
-
-A är säkrast och närmast offertens formspråk. B är den enda som svarar på frågan kunden
-faktiskt bär på inför ett hembesök: *vad förväntas av mig?* Den betalar sig i färre
-bomkörningar och färre samtal, men bara om ni fyller i förberedelserna. Gör ni inte det
-blir B en tom form och då är A bättre.
-
-C är rätt om sidan mest kommer att öppnas om och om igen för att kolla en enda uppgift,
-men den återinför en tvåkolumnskänsla på desktop, vilket ligger nära det ni bad mig ta bort.
+- **Fyller sig själv ur CRM:et** via `window.AMPY_BOKNING` och `data-oa`-hookar. Utan objektet
+  visas exempelvärdena. Fritext tolkas aldrig som HTML.
+- **Fyra tillstånd** (`bekraftad`, `ombokning_begard`, `avbokning_begard`, `avbokad`) styr
+  etiketten över datumet, ankomstfaktan, statusraden, vilka knappar som är öppna och sidtiteln.
+  Sidan påstår aldrig mer än »mottaget«; bekräftelsen kommer från CRM:et.
+- **Tre vägar att höra av sig:** ställ en fråga, föreslå en ny tid, avboka. Anledningen är
+  obligatorisk vid ny tid och avbokning (ägarkrav), datumet får inte ligga bakåt i tiden, en
+  avbokning låser ombokningen. Skickas som JSON till `bokning.endpoint`; utan endpoint bara lokal
+  kvittens.
+- **»Imorgon,« framför datumet** när besöket är 0–2 dagar bort, räknat i kundens lokala tid.
 
 ## Filer
 
 ```
-index.html                    jämförelsesidan
-UX-ANALYS.md                  analysen bakom riktningarna
-riktning-a-kallelsen/
-riktning-b-dagen/
-riktning-c-kvittensen/
-assets/                       tokens, shared.css, typsnitt, logotyper
-  bokning.css                 komponenterna som är nya för den här sidan
-  bokning.js                  paneler, obligatorisk anledning, kalenderfil
+riktning-b-dagen/index.html    den valda sidan (leveransen)
+assets/bokning.css             allt som är specifikt för sidan
+assets/bokning.js              injektion, tillstånd, de tre vägarna, relativ tid
+assets/shared.css              verbatim från offertmallen, rörs inte här
+assets/tokens.css              verbatim produktionstokens, rörs inte
+exempel-integration.html       testsidan för utvecklaren (kräver http, inte file://)
+HANDOVER.md                    utvecklardokumentationen (engelska)
+UX-ANALYS.md                   analysen bakom de tre riktningarna
+index.html                     jämförelsesidan
+riktning-a-kallelsen/          fryst utkast
+riktning-c-kvittensen/         fryst utkast
+assets/utkast/                 frysta kopior av css/js som utkasten A och C använder
 ```
 
 Kör lokalt: `python3 -m http.server 8000` och öppna `http://localhost:8000/`.
 
 ## Status
 
-Wireframes för riktningsval. Ingen backend: om- och avbokning är gränssnittsbeteende och
-skickar ingenting. Datakontraktet följer samma mönster som offertmallen
-(`window.AMPY_OFFER` + `data-oa`-hookar) men är inte inkopplat än — det görs när riktningen
-är vald.
+Granskad inför utveckling 2026-09-02: HTML/tillgänglighet, CSS/responsivitet och JS/datakontrakt
+av tre oberoende granskare, därefter mätt på 17 bredder 320–1920 med panelerna stängda och öppna
+(noll överflöd, alla tapytor ≥ 44 px) och provkörd med fientlig testdata i alla fyra tillstånden.
+Öppna ägarfrågor står i HANDOVER.md §10.
 
-Uppmätt vid 320, 390, 768 och 1440 px: noll horisontellt överflöde, alla bilder laddar,
-inga konsolfel.
+Två luckor är markerade i stället för ifyllda, och ska så förbli tills ägaren svarar:
+**hur länge strömmen är av** under arbetet, och **vad en sen avbokning kostar**.
