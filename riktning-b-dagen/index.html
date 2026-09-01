@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Din bokning är klar · Ampy</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <link rel="preload" href="../assets/fonts/Outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/tokens.css">
+  <link rel="stylesheet" href="../assets/shared.css">
+  <link rel="stylesheet" href="../assets/bokning.css">
+  <style>
+    /* RIKTNING B — »Dagen«
+       Besöket som en tidslinje: innan, på plats, efteråt. Elektrikern ligger
+       där hen hör hemma i berättelsen, inne i »På plats«. Beställningen fälls
+       ihop till en uppteckning man öppnar vid behov.
+       Formen är pedagogisk: den svarar på frågor kunden inte ställer högt. */
+    .b-card {
+      background: rgba(255,255,255,.85); border: 1px solid var(--card-border);
+      border-radius: var(--r-lg);
+      box-shadow: 0 18px 44px rgba(9,11,50,.09), inset 0 1px 0 rgba(255,255,255,.6);
+      padding: clamp(20px, 3vw, 32px) clamp(18px, 3.2vw, 34px);
+    }
+    .b-card > * + * { margin-top: 18px; }
+
+    .b-hero { display: flex; flex-direction: column; gap: 4px; }
+
+    /* tidslinjen: en lodrät linje som binder ihop de tre skedena */
+    .b-line { list-style: none; display: flex; flex-direction: column; gap: 0; }
+    .b-step { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr);
+      column-gap: 18px; padding-bottom: 34px; }
+    .b-step:last-child { padding-bottom: 0; }
+    .b-step:not(:last-child)::after {
+      content: ""; position: absolute; left: 21px; margin-left: -1px; width: 2px;
+      top: 44px; bottom: 8px;
+      background: linear-gradient(180deg, rgba(0,169,145,.40), rgba(0,169,145,.12));
+    }
+    .b-step__dot {
+      grid-column: 1; grid-row: 1 / span 2; align-self: start; z-index: 1;
+      width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+      background: #fff; border: 2px solid rgba(0,169,145,.32);
+    }
+    .b-step__dot svg { width: 20px; height: 20px; fill: none; stroke: var(--teal-ink);
+      stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .b-step__when {
+      grid-column: 2; grid-row: 1;
+      font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--teal-ink); padding-top: 5px;
+    }
+    .b-step__body { grid-column: 2; grid-row: 2; padding-top: 6px; }
+    .b-step__body > h3 { font-size: 22px; font-weight: 600; color: var(--ink);
+      line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
+    .b-step__body > * + * { margin-top: 12px; }
+    .b-step__body p { font-size: 15px; font-weight: 300; color: var(--body-ink);
+      line-height: 1.6; max-width: 58ch; text-wrap: pretty; }
+  </style>
+</head>
+<body>
+<div class="co-shell bk-shell">
+
+  <header class="of-top co-top">
+    <img class="of-top__logo" src="../assets/ampy-logo-dark.png" alt="Ampy" width="1600" height="468">
+    <div class="of-top__meta">
+      <span class="of-pill">Bokning <span data-oa="bokning.referens">#B-2026-0431</span></span>
+      <span class="of-top__valid">Offert <span data-oa="offert.referens">#2026-0187</span></span>
+    </div>
+  </header>
+
+  <p class="bk-band">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+    Tiden är bokad och din offert är accepterad
+  </p>
+
+  <main class="bk-flow" id="innehall">
+
+    <!-- NÄR. Även i den berättande riktningen ligger datumet överst: kunden
+         öppnar sidan flera gånger och ska aldrig behöva scrolla efter det. -->
+    <section class="b-card b-hero" aria-labelledby="nar-h">
+      <div class="bk-when">
+        <span class="w-cap" id="nar-h">Vi kommer</span>
+        <span class="w-day" data-oa="bokning.dag_lang">Torsdag 24 september</span>
+        <span class="w-time" data-oa="bokning.tidsfonster">08:00 till 12:00</span>
+        <!-- Namnet står redan här, inte bara nere i tidslinjen. Uppmätt låg
+             elektrikerkortet på y=877 på en 390px-skärm, alltså under viken,
+             och »vem kommer« är en av de två frågor sidan måste besvara utan
+             scroll. Hela kortet med bild och nummer ligger kvar i »På plats«,
+             där det hör hemma i berättelsen. -->
+        <span class="w-note"><b style="font-weight:600;color:var(--ink)" data-oa="elektriker.namn">[Elektriker]</b> kommer till dig och ringer när hen är på väg.</span>
+        <button class="bk-cal" type="button" data-kalender
+                data-start="20260924T060000Z" data-slut="20260924T100000Z"
+                data-titel="Elektriker från Ampy" data-uid="B-2026-0431"
+                data-text="Byte av elcentral. Ampy Nordic AB, 010-265 79 79."
+                data-plats="Hemma hos dig">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3M17 3v3"/><path d="M3.8 8.6h16.4"/><path d="M4.6 5.6h14.8v14.8H4.6z"/></svg>
+          Lägg till i kalendern
+        </button>
+      </div>
+    </section>
+
+    <!-- TIDSLINJEN: innan, på plats, efteråt -->
+    <section class="b-card" aria-labelledby="dagen-h">
+      <h2 class="of-h2" id="dagen-h">Så går dagen till</h2>
+
+      <ol class="b-line">
+        <li class="b-step">
+          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 20.5h15"/><path d="M6.5 20.5V9.8L12 5.2l5.5 4.6v10.7"/><path d="M10 20.5v-5h4v5"/></svg></span>
+          <span class="b-step__when">Innan vi kommer</span>
+          <div class="b-step__body">
+            <h3>Röj framför elcentralen</h3>
+            <p>Elektrikern behöver komma åt centralen fritt. Flytta undan det som står framför, och se till att någon är hemma och kan öppna.</p>
+            <ul class="bk-prep">
+              <li><span class="p-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span class="p-txt"><b>Fri passage</b> fram till elcentralen</span></li>
+              <li><span class="p-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span class="p-txt"><b>Någon hemma</b> under hela besöket</span></li>
+              <li><span class="p-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span><span class="p-txt"><b>Strömmen är av</b> under delar av arbetet. <span class="of-gap">GAP: hur länge?</span></span></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="b-step">
+          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.2 2.8 5.4 13.4h5.6l-1.2 7.8 7.8-10.6h-5.6z"/></svg></span>
+          <span class="b-step__when">På plats</span>
+          <div class="b-step__body">
+            <h3>Det här gör vi hemma hos dig</h3>
+            <div class="bk-who">
+              <span class="bk-who__photo">
+                <!-- [ELEKTRIKERBILD] profilbilden från CRM:et; silhuetten är platshållaren -->
+                <svg data-oa-photo="elektriker.profilbild_url" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 20.4c.6-3.9 3.6-6 7.2-6s6.6 2.1 7.2 6"/></svg>
+              </span>
+              <span>
+                <span class="bk-who__name" data-oa="elektriker.namn">[Elektriker]</span>
+                <span class="bk-who__role">Behörig elektriker. Ringer när hen är på väg.</span>
+                <a class="bk-who__tel" href="tel:+46102657979">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 3.8h3.4l1.7 4.2-2.1 1.3a11.4 11.4 0 0 0 5.5 5.5l1.3-2.1 4.2 1.7v3.4c0 .9-.8 1.6-1.7 1.5C10.8 18.6 5.4 13.2 4.7 5.5c-.1-.9.6-1.7 1.5-1.7Z"/></svg>
+                  <span data-oa="elektriker.telefon">010-265 79 79</span>
+                </a>
+              </span>
+            </div>
+            <ul class="of-work" data-oa-list="bokning.arbetsbeskrivning">
+              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div><h3>Demontering av din gamla elcentral</h3></div></li>
+              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div><h3>Installation av två modulkapslingar (2×13)</h3></div></li>
+              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div><h3>Två jordfelsbrytare</h3><p>Huset delas upp på två jordfelsbrytare i stället för en. Vid ett jordfel blir aldrig hela huset strömlöst.</p></div></li>
+              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div><h3>Personskyddsautomat för kyl och frys</h3><p>Egen säkring med inbyggt jordfelsskydd. Kyl och frys står kvar även vid jordfel i andra delar av anläggningen.</p></div></li>
+              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+                <div><h3>Uppdaterat gruppschema</h3></div></li>
+            </ul>
+            <details class="of-material">
+              <summary>
+                Material som ingår
+                <svg class="m-arrow" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+              </summary>
+              <ul data-oa-list="bokning.material">
+                <li>2 st modulkapsling 2×13</li>
+                <li>2 st jordfelsbrytare</li>
+                <li>1 st personskyddsautomat 10 A</li>
+                <li>1 st huvudbrytare</li>
+                <li>Dvärgbrytare 10 A</li>
+                <li>Dvärgbrytare 16 A</li>
+                <li>Installationsmaterial</li>
+                <li>Invändiga kopplingar och kabel</li>
+                <li>Uppmärkning</li>
+              </ul>
+            </details>
+          </div>
+        </li>
+
+        <li class="b-step">
+          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 3.7h7L18 8.2v12.1H6.5z"/><path d="M13.5 3.7v4.5H18"/><path d="M9.6 15.6l1.8 1.8 3.3-3.6"/></svg></span>
+          <span class="b-step__when">Efteråt</span>
+          <div class="b-step__body">
+            <h3>Du får dokumentationen och sedan fakturan</h3>
+            <p>Elektrikern går igenom vad som gjorts innan hen lämnar. Du får uppmärkningen av gruppschemat på plats.
+              Fakturan kommer efter att arbetet är utfört, inte nu.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- BESTÄLLNINGEN: uppteckningen, hopfälld. Priset är en kvittens. -->
+    <section class="b-card" aria-labelledby="pris-h">
+      <h2 class="of-h2" id="pris-h">Så här ser din beställning ut</h2>
+      <div class="bk-order__rows">
+        <div class="bk-row">
+          <span class="lbl">Komplett arbete</span>
+          <span class="amt" data-oa="bokning.grundbelopp_text">11&nbsp;900&nbsp;kr</span>
+        </div>
+        <div class="bk-row bk-row--add">
+          <span class="lbl">Extra arbetstimme på plats</span>
+          <span class="amt">+&nbsp;850&nbsp;kr</span>
+        </div>
+      </div>
+      <div class="bk-total">
+        <span class="t-lbl">Överenskommet pris</span>
+        <span class="t-amt" data-oa="bokning.total_text">12&nbsp;750&nbsp;kr</span>
+        <span class="t-vat">inkl. moms, efter ROT-avdrag</span>
+      </div>
+      <p class="bk-paynote">Ingenting ska betalas nu. Behöver vi göra något utöver det som står här frågar vi dig först.</p>
+      <details class="of-legal">
+        <summary>
+          Villkor för uppdraget
+          <svg class="m-arrow" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="l-body">
+          <p class="l-unique" data-oa="bokare.villkorstext">[Bokarens text om just det här uppdraget läggs in här.]</p>
+          <p><a class="of-terms-link" href="https://ampy.se/kopvillkor" target="_blank" rel="noopener">Läs våra allmänna köpvillkor</a></p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ÄNDRA -->
+    <section class="b-card" aria-labelledby="andra-h">
+      <h2 class="of-h2" id="andra-h">Behöver du ändra tiden?</h2>
+      <p class="bk-change__intro">Säg till så snart du vet, så hittar vi en ny tid. Det kostar ingenting att flytta bokningen.
+        <span class="of-gap of-gap--note">GAP: gäller detta även vid avbokning nära inpå?</span>
+      </p>
+
+      <div class="bk-change__btns">
+        <button class="of-btn-secondary" type="button" id="omboka-btn" aria-expanded="false" aria-controls="omboka-panel">Föreslå en ny tid</button>
+        <button class="of-btn-secondary" type="button" id="avboka-btn" aria-expanded="false" aria-controls="avboka-panel">Avboka</button>
+      </div>
+
+      <div class="bk-panel" id="omboka-panel">
+        <h3>Föreslå en ny tid</h3>
+        <p class="p-hint">Vi bekräftar innan något ändras. Den nuvarande tiden står kvar tills du hört av oss.</p>
+        <div class="bk-two">
+          <div class="bk-field">
+            <label for="b-datum">Vilket datum skulle passa?</label>
+            <input type="date" id="b-datum" data-nytt-datum>
+          </div>
+          <div class="bk-field">
+            <label for="b-fonster">När på dagen?</label>
+            <select id="b-fonster" data-nytt-fonster>
+              <option value="fm">Förmiddag</option>
+              <option value="em">Eftermiddag</option>
+              <option value="nar">Spelar ingen roll</option>
+            </select>
+          </div>
+        </div>
+        <div class="bk-field">
+          <label for="b-varfor-om">Varför passar inte den bokade tiden?</label>
+          <textarea id="b-varfor-om" data-varfor placeholder="Till exempel: jag är bortrest den veckan"></textarea>
+        </div>
+        <button class="of-btn-send" type="button" data-skicka>
+          <span>Skicka förslaget</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </button>
+        <p class="bk-status" role="status"></p>
+      </div>
+
+      <div class="bk-panel" id="avboka-panel">
+        <h3>Avboka</h3>
+        <p class="p-hint">Vill du hellre flytta tiden än att avboka helt? Använd knappen ovanför.</p>
+        <div class="bk-field">
+          <label for="b-varfor-av">Varför avbokar du?</label>
+          <textarea id="b-varfor-av" data-varfor placeholder="Skriv kort vad som hände"></textarea>
+        </div>
+        <button class="of-btn-send" type="button" data-skicka>
+          <span>Avboka tiden</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true" width="17" height="17"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+        </button>
+        <p class="bk-status" role="status"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="of-foot">
+    Ampy Nordic AB · Org.nr 559254-9819 · <a href="tel:+46102657979" class="nb">010-265 79 79</a>
+  </footer>
+</div>
+<script src="../assets/bokning.js"></script>
+</body>
+</html>
