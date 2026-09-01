@@ -61,44 +61,6 @@
       .b-lead__name { font-size: 18.5px; }
     }
 
-    /* tidslinjen: en lodrät linje som binder ihop de tre skedena */
-    .b-line { list-style: none; display: flex; flex-direction: column; gap: 0; }
-    .b-step { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr);
-      column-gap: 18px; padding-bottom: 34px; }
-    .b-step:last-child { padding-bottom: 0; }
-    /* Skenan hade samma luft i BÅDA ändarna på pappret men inte i verkligheten:
-       top: 44px låg exakt på prickens underkant (0 px luft) medan botten hade
-       8. Och när stegavståndet flyttades från padding till margin hamnade den
-       undre änden 40 px från nästa prick. 52 = prickens 44 + 8 px luft;
-       -24 sträcker in i marginalen på 32 och lämnar samma 8 px i botten. */
-    .b-step:not(:last-child)::after {
-      content: ""; position: absolute; left: 21px; margin-left: -1px; width: 2px;
-      top: 52px; bottom: -24px;
-      background: linear-gradient(180deg, rgba(0,169,145,.40), rgba(0,169,145,.12));
-    }
-    .b-step__dot {
-      grid-column: 1; grid-row: 1 / span 2; align-self: start; z-index: 1;
-      width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-      background: #fff; border: 2px solid rgba(0,169,145,.32);
-    }
-    .b-step__dot svg { width: 20px; height: 20px; fill: none; stroke: var(--teal-ink);
-      stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-    .b-step__when {
-      grid-column: 2; grid-row: 1;
-      font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-      color: var(--teal-ink); padding-top: 5px;
-    }
-    .b-step__body { grid-column: 2; grid-row: 2; padding-top: 6px; }
-    /* Samma lutning som .of-h2 (clamp(20px,.8vw+17px,24px)), 2,1 px under den
-       vid varje bredd. Låst 22 px gjorde stegrubriken STÖRRE än sin egen
-       sektionsrubrik på varje telefon: 22 mot 20 vid 320. */
-    .b-step__body > h3 { font-size: clamp(18px, .8vw + 14.9px, 22px); font-weight: 600;
-      color: var(--ink); line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
-    /* Momenten är barn till skedet, inte syskon: H2 -> H3 -> H4.
-       Renderingen är pixelidentisk med den tidigare h3-stilen. */
-    .b-step__body .of-work h4 { font-size: 16.5px; font-weight: 600; color: var(--ink);
-      line-height: 1.3; text-wrap: balance; }
-
     /* FYND: tidsfönstret bröts mitt i värdet, »...mellan 08:00 och« / »12:00«,
        vid 320/360/390. Meningen får brytas, värdet får inte. */
     .bk-when .w-time [data-oa] { white-space: nowrap; }
@@ -110,57 +72,28 @@
        med offertmallen. */
     .of-material ul { grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); }
 
-    @media (max-width: 560px) {
-      /* INVARIANT: en markör finns bara där en skena binder ihop den.
-         Två nästlade rännor tog 119 px av kortbredden, så brödtexten fick
-         21-26 tecken per rad. Kroppen går därför ut i full spaltbredd och
-         skenan döljs. Men då blev 44 px-noden en dekoration som inte kopplade
-         ihop något, med brödtexten flush mot sin underkant (uppmätt 0 px).
-         Markören krymper till etikettens egen skala och sätter sig PÅ
-         etikettraden: tillsammans bildar de en enda sektionsetikett. */
-      /* ÄGARORDER: på mobil bort med stegmarkörerna, skedesetiketterna och
-         hela »Efteråt«-steget. Tidslinjen kräver en lodrät skena för att bära
-         sin mening, och skenan finns bara på desktop. Utan den var markören
-         och etiketten dekoration som tog plats i en 320 px spalt.
-         Kvar blir en ren rubrik med sin lista. Desktop är oförändrat. */
-      .b-step { display: block; padding: 0; }
-      .b-step__dot, .b-step__when { display: none; }
-      .b-step__body { padding-top: 0; }
-      .b-line > .b-step:last-child { display: none; }
-      .b-step:not(:last-child)::after { display: none; }
-    }
-    .b-step__body p { font-size: 15px; font-weight: 300; color: var(--body-ink);
+    /* Arbetsblocket. Tidigare låg det inne i ett tidslinjesteg; steget och
+       dess markör togs bort på ägarorder, så scopet är nu blocket självt.
+       Avståndsstegen är oförändrad: avståndet kodar nivån.
+         4   momentrubrik -> dess egen beskrivning
+        16   rubrik -> listan, moment -> moment
+        24   efter ett moment MED beskrivning, och listan -> materialblocket */
+    .b-work > * + * { margin-top: 16px; }
+    .b-work > h3 { font-size: clamp(18px, .8vw + 14.9px, 22px); font-weight: 600;
+      color: var(--ink); line-height: 1.25; letter-spacing: -.01em; text-wrap: balance; }
+    .b-work p { font-size: 15px; font-weight: 300; color: var(--body-ink);
       line-height: 1.6; max-width: 58ch; text-wrap: pretty; }
-
-    /* =====================================================================
-       AVSTÅNDSSTEGEN. Uppmätt före: h2 -> stegetikett 19, etikett -> h3 19,
-       moment -> moment 18. Tre olika NIVÅER på samma avstånd, alltså kunde
-       ögat inte se vad som hörde till vad, och sektionen läste som en vägg.
-       INVARIANT: avståndet kodar nivån. Varje steg upp i trädet är ett steg
-       upp på skalan, och två intilliggande nivåer får aldrig samma värde.
-
-         4   momentrubrik -> dess egen beskrivning   (tightaste paret)
-         8   stegetikett -> dess rubrik              (ETT par, inte två rader)
-        16   rubrik -> listan, och moment -> moment
-        24   listan -> materialblocket, h2 -> första steget
-        32   steg -> steg                            (högsta nivån i kortet)
-       ===================================================================== */
-    .b-step__body > * + * { margin-top: 16px; }
-    .b-step__when { padding-bottom: 0; }
-    .b-step__body { padding-top: 8px; }
-    /* .of-work bor i shared.css och delas med offertmallen: överskriv scopat,
-       rör aldrig originalet. */
-    .b-step__body .of-work { gap: 16px; }
-    /* Ett moment MED beskrivning är två textnivåer högt. Med samma 16 px till
-       nästa moment stängdes paret aldrig, och beskrivningen flöt mellan två
-       rubriker i stället för att höra till den ovanför. Momentet efter ett
-       beskrivet får därför 24 i stället för 16: 4 till sin egen beskrivning,
-       24 till nästa moment, alltså sex gånger tydligare bindning uppåt. */
-    .b-step__body .of-work li:has(p) + li { margin-top: 8px; }
-    .b-step__body .of-material { margin-top: 24px; }
-    .b-line > .b-step + .b-step { margin-top: 32px; }
-    .b-step { padding-bottom: 0; }
-    #dagen-h + .b-line { margin-top: 24px; }
+    /* Momenten är barn till blockets rubrik: H2 -> H3 -> H4. */
+    .b-work .of-work h4 { font-size: 16.5px; font-weight: 600; color: var(--ink);
+      line-height: 1.3; text-wrap: balance; }
+    /* .of-work bor i shared.css och delas med offertmallen: överskriv scopat. */
+    .b-work .of-work { gap: 16px; }
+    /* Ett moment MED beskrivning är två textnivåer högt. Med samma avstånd till
+       nästa moment stängdes paret aldrig och beskrivningen flöt mellan två
+       rubriker. 4 uppåt mot 24 nedåt binder den till sin egen rubrik. */
+    .b-work .of-work li:has(p) + li { margin-top: 8px; }
+    .b-work .of-material { margin-top: 24px; }
+    #dagen-h + .b-work { margin-top: 24px; }
   </style>
 </head>
 <body>
@@ -224,52 +157,38 @@
 
       <h2 class="of-h2" id="dagen-h">Så går arbetet till</h2>
 
-      <ol class="b-line">
-        <li class="b-step">
-          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13.2 2.8 5.4 13.4h5.6l-1.2 7.8 7.8-10.6h-5.6z"/></svg></span>
-          <span class="b-step__when">På plats</span>
-          <div class="b-step__body">
-            <h3>Det här gör vi hemma hos dig</h3>
-            <ul class="of-work" data-oa-list="bokning.arbetsbeskrivning">
-              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h4>Demontering av din gamla elcentral</h4></div></li>
-              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h4>Installation av två modulkapslingar (2×13)</h4></div></li>
-              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h4>Två jordfelsbrytare</h4><p>Huset delas upp på två jordfelsbrytare i stället för en. Vid ett jordfel blir aldrig hela huset strömlöst.</p></div></li>
-              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h4>Personskyddsautomat för kyl och frys</h4><p>Egen säkring med inbyggt jordfelsskydd. Kyl och frys står kvar även vid jordfel i andra delar av anläggningen.</p></div></li>
-              <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
-                <div><h4>Uppdaterat gruppschema</h4></div></li>
-            </ul>
-            <details class="of-material">
-              <summary>
-                Material som ingår
-                <svg class="m-arrow" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-              </summary>
-              <ul data-oa-list="bokning.material">
-                <li>2 st modulkapsling 2×13</li>
-                <li>2 st jordfelsbrytare</li>
-                <li>1 st personskyddsautomat 10 A</li>
-                <li>1 st huvudbrytare</li>
-                <li>Dvärgbrytare 10 A</li>
-                <li>Dvärgbrytare 16 A</li>
-                <li>Installationsmaterial</li>
-                <li>Invändiga kopplingar och kabel</li>
-                <li>Uppmärkning</li>
-              </ul>
-            </details>
-          </div>
-        </li>
-
-        <li class="b-step">
-          <span class="b-step__dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 3.7h7L18 8.2v12.1H6.5z"/><path d="M13.5 3.7v4.5H18"/><path d="M9.6 15.6l1.8 1.8 3.3-3.6"/></svg></span>
-          <span class="b-step__when">Efteråt</span>
-          <div class="b-step__body">
-            <h3>Du får dokumentationen och sedan fakturan</h3>
-          </div>
-        </li>
-      </ol>
+      <div class="b-work">
+        <h3>Det här gör vi hemma hos dig</h3>
+        <ul class="of-work" data-oa-list="bokning.arbetsbeskrivning">
+          <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <div><h4>Demontering av din gamla elcentral</h4></div></li>
+          <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <div><h4>Installation av två modulkapslingar (2×13)</h4></div></li>
+          <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <div><h4>Två jordfelsbrytare</h4><p>Huset delas upp på två jordfelsbrytare i stället för en. Vid ett jordfel blir aldrig hela huset strömlöst.</p></div></li>
+          <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <div><h4>Personskyddsautomat för kyl och frys</h4><p>Egen säkring med inbyggt jordfelsskydd. Kyl och frys står kvar även vid jordfel i andra delar av anläggningen.</p></div></li>
+          <li><span class="w-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <div><h4>Uppdaterat gruppschema</h4></div></li>
+        </ul>
+        <details class="of-material">
+          <summary>
+            Material som ingår
+            <svg class="m-arrow" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <ul data-oa-list="bokning.material">
+            <li>2 st modulkapsling 2×13</li>
+            <li>2 st jordfelsbrytare</li>
+            <li>1 st personskyddsautomat 10 A</li>
+            <li>1 st huvudbrytare</li>
+            <li>Dvärgbrytare 10 A</li>
+            <li>Dvärgbrytare 16 A</li>
+            <li>Installationsmaterial</li>
+            <li>Invändiga kopplingar och kabel</li>
+            <li>Uppmärkning</li>
+          </ul>
+        </details>
+      </div>
     </section>
 
     <!-- BESTÄLLNINGEN: uppteckningen, hopfälld. Priset är en kvittens. -->
