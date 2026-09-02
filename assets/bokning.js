@@ -301,7 +301,9 @@
   (function () {
     var t = document.querySelector("time[datetime]"), ut = document.querySelector("[data-rel]");
     if (!t || !ut) return;
-    if (D && !har("bokning.datum_iso")) return;
+    // Med riktig data räknas bara från ett giltigt bokning.datum_iso; ett saknat
+    // eller felformaterat värde får aldrig ge »Imorgon« från exempeldatumet.
+    if (D && !/^\d{4}-\d{2}-\d{2}$/.test(String(D["bokning.datum_iso"] || ""))) return;
     if (state !== "bekraftad" && state !== "ombokning_begard") return;
     var d = t.getAttribute("datetime").split("-").map(Number);
     if (d.length !== 3 || isNaN(d[0] + d[1] + d[2])) return;
